@@ -22,25 +22,30 @@ router.get('/:id', async (req, res, next) => {
   }
 })
 
-router.put('/', async (req, res, next) => {
+router.post('/', async (req, res, next) => {
   try {
     const [organization, wasCreated] = await Organization.findOrCreate({
-      where: req.body,
+      where: {
+        name: req.body.name,
+      },
+      defaults: req.body,
     })
-    res.send(organization)
+    res.status(201).send(organization)
   } catch (err) {
     next(err)
   }
 })
 
-router.update('/:id', async (req, res, next) => {
+router.put('/:id', async (req, res, next) => {
   try {
-    const [[organization], updatedRows] = await Organization.update({
-      where: req.body,
+    const [numRows, [organization]] = await Organization.update(req.body, {
+      where: {
+        id: +req.params.id,
+      },
       include: [Project],
       returning: true,
     })
-    res.send(organization)
+    res.status(200).send(organization)
   } catch (err) {
     next(err)
   }
