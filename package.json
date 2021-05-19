@@ -1,7 +1,7 @@
 {
-  "name": "note-ary",
+  "name": "kanban",
   "version": "2.0.0",
-  "description": "Currently just a trello clone...",
+  "description": "an organization-based project management tool with kanban boards and socket support",
   "engines": {
     "node": "~12.11.1"
   },
