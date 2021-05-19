@@ -16,10 +16,10 @@ discussion into the code that makes up this repository, see the
 
 To use this as boilerplate, you'll need to take the following steps:
 
-* Don't fork or clone this repo! Instead, create a new, empty
+- Don't fork or clone this repo! Instead, create a new, empty
   directory on your machine and `git init` (or create an empty repo on
   Github and clone it to your local machine)
-* Run the following commands:
+- Run the following commands:
 
 ```
 git remote add boilermaker https://github.com/FullstackAcademy/boilermaker.git
@@ -40,10 +40,10 @@ git merge boilermaker/master
 
 Now that you've got the code, follow these steps to get acclimated:
 
-* Update project name and description in `package.json` and
+- Update project name and description in `package.json` and
   `.travis.yml` files
-* `npm install`
-* Create two postgres databases (`MY_APP_NAME` should match the `name`
+- `npm install`
+- Create two postgres databases (`MY_APP_NAME` should match the `name`
   parameter in `package.json`):
 
 ```
@@ -52,16 +52,16 @@ createdb $MY_APP_NAME
 createdb $MY_APP_NAME-test
 ```
 
-* By default, running `npm test` will use `boilermaker-test`, while
+- By default, running `npm test` will use `boilermaker-test`, while
   regular development uses `boilermaker`
-* Create a file called `secrets.js` in the project root
-  * This file is listed in `.gitignore`, and will _only_ be required
+- Create a file called `secrets.js` in the project root
+  - This file is listed in `.gitignore`, and will _only_ be required
     in your _development_ environment
-  * Its purpose is to attach the secret environment variables that you
+  - Its purpose is to attach the secret environment variables that you
     will use while developing
-  * However, it's **very** important that you **not** push it to
+  - However, it's **very** important that you **not** push it to
     Github! Otherwise, _prying eyes_ will find your secret API keys!
-  * It might look like this:
+  - It might look like this:
 
 ```
 process.env.GOOGLE_CLIENT_ID = 'hush hush'
@@ -71,9 +71,9 @@ process.env.GOOGLE_CALLBACK = '/auth/google/callback'
 
 ### OAuth
 
-* To use OAuth with Google, complete the steps above with a real client
+- To use OAuth with Google, complete the steps above with a real client
   ID and client secret supplied from Google
-  * You can get them from the [Google APIs dashboard][google-apis].
+  - You can get them from the [Google APIs dashboard][google-apis].
 
 [google-apis]: https://console.developers.google.com/apis/credentials
 
@@ -89,9 +89,9 @@ and stick to it. Any linter rule that you object to can be "turned
 off" in `.eslintrc.json`. You may also choose an entirely different
 config if you don't like ours:
 
-* [Standard style guide](https://standardjs.com/)
-* [Airbnb style guide](https://github.com/airbnb/javascript)
-* [Google style guide](https://google.github.io/styleguide/jsguide.html)
+- [Standard style guide](https://standardjs.com/)
+- [Airbnb style guide](https://github.com/airbnb/javascript)
+- [Google style guide](https://google.github.io/styleguide/jsguide.html)
 
 ## Start
 
@@ -107,8 +107,8 @@ From there, just follow your bliss.
 Ready to go world wide? Here's a guide to deployment! There are two
 supported ways to deploy in Boilermaker:
 
-* automatically, via continuous deployment with Travis.
-* "manually", from your local machine via the `deploy` script.
+- automatically, via continuous deployment with Travis.
+- "manually", from your local machine via the `deploy` script.
 
 Either way, you'll need to set up your deployment server to start.
 The steps below are also covered in the CI/CD workshop.
@@ -121,14 +121,14 @@ The steps below are also covered in the CI/CD workshop.
 
 [heroku-cli]: https://devcenter.heroku.com/articles/heroku-cli
 
-* **If you are creating a new app...**
+- **If you are creating a new app...**
 
   1.  `heroku create` or `heroku create your-app-name` if you have a
       name in mind.
   2.  `heroku addons:create heroku-postgresql:hobby-dev` to add
       ("provision") a postgres database to your heroku dyno
 
-* **If you already have a Heroku app...**
+- **If you already have a Heroku app...**
 
   1.  `heroku git:remote your-app-name` You'll need to be a
       collaborator on the app.
@@ -223,3 +223,121 @@ production server to be cluttered up with dev dependencies like
 git-tracking to be cluttered with production build files like
 `bundle.js`! By doing these steps, we make sure our development and
 production environments both stay nice and clean!
+
+# Project name
+
+<!--- These are examples. See https://shields.io for others or to customize this set of shields. You might want to include dependencies, project status and licence info here --->
+
+![GitHub contributors](https://img.shields.io/github/contributors/nicolerae/README-templateFSA.md)
+![GitHub stars](https://img.shields.io/github/stars/nicolerae/README-templateFSA.md?style=social)
+![GitHub forks](https://img.shields.io/github/forks/nicolerae/README-templateFSA.md?style=social)
+![Twitter Follow](https://img.shields.io/twitter/follow/nicole_rae?style=social)
+
+<!-- PROJECT LOGO -->
+<br />
+<p align="center">
+  <a href="https://www.fullstackacademy.com/">
+    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTvb1JL7ZWrXisAAKRGlhl6AVCmjMQQJAvLCQ&usqp=CAU" alt="Logo" width="80" height="80">
+  </a>
+
+  <h3 align="center">README-Template</h3>
+
+  <p align="center">
+    A README template for your projects that will impress recruiters!
+    <br />
+
+Project name is a `<utility/tool/feature>` that allows `<insert_target_audience>` to do `<action/task_it_does>`.
+
+Additional line of information text about what the project does. Your introduction should be around 2 or 3 sentences.
+Don't go overboard, people won't read it!
+
+_</b> Image(s) Insert Here_ </b> - here is where you can place images of your project, a demo gif, and link to a deployed site - visuals matter!
+
+<p align='center'><a href="https://www.loom.com/share/04d6c8482c7341fb9b423d10f0bea30b"> <img style="max-width:300px" src="https://cdn.loom.com/sessions/thumbnails/04d6c8482c7341fb9b423d10f0bea30b-with-play.gif"> </br> <p>Watch Video</p> </a></p>
+
+## Prerequisites:
+
+Before you begin, ensure you have met the following requirements:
+
+<!--- These are just example requirements. Add, duplicate or remove as required --->
+
+- You have installed the latest version of `<coding_language/dependency/requirement_1>`
+- You have a `<Windows/Linux/Mac>` machine. State which OS is supported/which is not.
+- You have read `<guide/link/documentation_related_to_project>`.
+
+## Installing <project_name>:
+
+To install <project_name>, follow these steps:
+
+Linux and macOS:
+
+```
+<install_command>
+```
+
+Windows:
+
+```
+<install_command>
+```
+
+## Using <project_name>:
+
+To use <project_name>, follow these steps:
+
+```
+<usage_example>
+```
+
+Add run commands and examples you think users will find useful.
+Provide an options reference for bonus points!
+
+## Contributing to <project_name>:
+
+<!--- If your README is long or you have some specific process or steps you want contributors to follow, consider creating a separate CONTRIBUTING.md file--->
+
+To contribute to <project_name>, follow these steps:
+
+1. Fork this repository.
+2. Create a branch: `git checkout -b <branch_name>`.
+3. Make your changes and commit them: `git commit -m '<commit_message>'`
+4. Push to the original branch: `git push origin <project_name>/<location>`
+5. Create the pull request.
+
+Alternatively see the GitHub documentation on [creating a pull request](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request).
+
+## Contributors/Collaborators:
+
+Thanks to the following people who have contributed to this project:
+
+- [@N2ameOFpersonwhohelpedyou](https://github.com/theirN@me) 📖
+
+You might want to consider using something like the [All Contributors](https://github.com/all-contributors/all-contributors) specification and its [emoji key](https://allcontributors.org/docs/en/emoji-key).
+
+## Roadmap:
+
+If you have ideas for releases in the future, it is a good idea to list them in the README.
+
+## Contact:
+
+If you want to contact me you can reach me at <nicole.drummond@fullstackacademy.com>.
+
+Connect with me on <a href="/linkedin.com/in/nicoleraedrummond">LinkedIN</a>
+
+## License:
+
+<!--- If you're not sure which open license to use see https://choosealicense.com/--->
+
+This project uses the following license: [<license_name>](link).
+
+## Additional Resources:
+
+https://www.makeareadme.com
+
+https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/about-readmes
+
+https://github.com/scottydocs/README-template.md
+
+https://github.com/kefranabg/readme-md-generator
+
+https://github.com/tkshill
