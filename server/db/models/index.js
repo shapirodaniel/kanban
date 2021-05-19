@@ -1,18 +1,36 @@
+const Sequelize = require('sequelize')
+const db = require('../db')
+
 const User = require('./user')
+const Organization = require('./organization')
+const Project = require('./project')
+const Task = require('./task')
 
-/**
- * If we had any associations to make, this would be a great place to put them!
- * ex. if we had another model called BlogPost, we might say:
- *
- *    BlogPost.belongsTo(User)
- */
+const UserOrganization = db.define('user_organization', {
+  role: Sequelize.ENUM('member', 'owner'),
 
-/**
- * We'll export all of our models here, so that any time a module needs a model,
- * we can just require it from 'db/models'
- * for example, we can say: const {User} = require('../db/models')
- * instead of: const User = require('../db/models/user')
- */
+  // status will be used to determine whether a user_organization
+  // is an INVITE (with status: pending)
+  status: Sequelize.ENUM('pending', 'active'),
+})
+
+// associations
+Project.hasMany(Task)
+Task.belongsTo(Project)
+
+Organization.hasMany(Project)
+Project.belongsTo(Organization)
+
+Organization.belongsToMany(User, {through: UserOrganization})
+User.belongsToMany(Organization, {through: UserOrganization})
+
+Task.belongsToMany(User)
+User.belongsToMany(Task)
+
 module.exports = {
-  User
+  User,
+  Organization,
+  Project,
+  Task,
+  UserOrganization,
 }
