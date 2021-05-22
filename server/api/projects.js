@@ -73,7 +73,8 @@ router.delete('/:id', async (req, res, next) => {
     await Project.destroy({
       where: {
         id: +req.params.id
-      }
+      },
+      hooks: true
     })
     res.sendStatus(204)
   } catch (err) {

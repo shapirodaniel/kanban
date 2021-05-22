@@ -17,10 +17,13 @@ const UserTask = db.define('user_task')
 const UserProject = db.define('user_project')
 
 // associations
-Project.hasMany(Column)
+
+// important! https://sequelize.org/master/manual/hooks.html
+// in order to fire beforeDestroy hook we need onDelete, hooks options
+Project.hasMany(Column, {onDelete: 'CASCADE', hooks: true})
 Column.belongsTo(Project)
 
-Project.hasMany(Task)
+Project.hasMany(Task, {onDelete: 'CASCADE', hooks: true})
 Task.belongsTo(Project)
 
 Column.hasMany(Task)

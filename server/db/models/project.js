@@ -55,6 +55,23 @@ Project.afterCreate(async project => {
   return project
 })
 
+// cascade hard delete to columns, tasks
+// * note * this requires {onDelete: 'CASCADE', hooks: true} on the hasMany association
+Project.beforeDestroy(project => {
+  const columns = project.getColumns()
+  const tasks = project.getTasks()
+
+  console.log('before destroy hook: ', columns, tasks)
+
+  columns.forEach(async col => {
+    await col.destroy()
+  })
+
+  tasks.forEach(async task => {
+    await task.destroy()
+  })
+})
+
 Project.updateAndAssociate = async function (projectId, updateInfo) {
   const [numRows, [project]] = await this.update(updateInfo, {
     where: {
