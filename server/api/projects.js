@@ -35,36 +35,6 @@ router.get('/:id', async (req, res, next) => {
   }
 })
 
-/* may not need the next two */
-
-// GET single project's columns
-router.get('/:id/columns', async (req, res, next) => {
-  try {
-    const columns = await Column.findAll({
-      where: {
-        projectId: +req.params.id
-      }
-    })
-    res.send(columns)
-  } catch (err) {
-    next(err)
-  }
-})
-
-// GET single project's tasks
-router.get('/:id/tasks', async (req, res, next) => {
-  try {
-    const tasks = await Task.findAll({
-      where: {
-        projectId: +req.params.id
-      }
-    })
-    res.send(tasks)
-  } catch (err) {
-    next(err)
-  }
-})
-
 // POST create a new project
 router.post('/', async (req, res, next) => {
   try {
