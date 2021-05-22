@@ -1,6 +1,8 @@
+/* eslint-disable camelcase */
 const crypto = require('crypto')
 const Sequelize = require('sequelize')
 const db = require('../db')
+const UserOrganization = require('./userOrganization')
 
 const User = db.define('user', {
   firstName: Sequelize.STRING,
@@ -46,31 +48,10 @@ const User = db.define('user', {
 
 module.exports = User
 
-/**
- * instanceMethods
- */
-User.prototype.correctPassword = function (candidatePwd) {
-  return User.encryptPassword(candidatePwd, this.salt()) === this.password()
-}
+///////////
+/* HOOKS */
+///////////
 
-/**
- * classMethods
- */
-User.generateSalt = function () {
-  return crypto.randomBytes(16).toString('base64')
-}
-
-User.encryptPassword = function (plainText, salt) {
-  return crypto
-    .createHash('RSA-SHA256')
-    .update(plainText)
-    .update(salt)
-    .digest('hex')
-}
-
-/**
- * hooks
- */
 const setSaltAndPassword = user => {
   if (user.changed('password')) {
     user.salt = User.generateSalt()
@@ -83,3 +64,48 @@ User.beforeUpdate(setSaltAndPassword)
 User.beforeBulkCreate(users => {
   users.forEach(setSaltAndPassword)
 })
+
+///////////////////
+/* CLASS METHODS */
+///////////////////
+
+User.generateSalt = function () {
+  return crypto.randomBytes(16).toString('base64')
+}
+
+User.encryptPassword = function (plainText, salt) {
+  return crypto
+    .createHash('RSA-SHA256')
+    .update(plainText)
+    .update(salt)
+    .digest('hex')
+}
+
+User.handleInvitation = async function (userId, organizationId, didAccept) {
+  // first grab userOrg
+  const user_organization = await UserOrganization.findOne({
+    where: {
+      userId,
+      organizationId
+    }
+  })
+  if (!user_organization) throw new Error('UserOrganization not found!')
+
+  // if user rejected invitation, destroy the userOrg instance
+  if (!didAccept) {
+    await user_organization.destroy()
+    return
+  }
+
+  // otherwise, update the userOrg status from 'pending' to 'active'
+  user_organization.status = 'active'
+  await user_organization.save()
+}
+
+//////////////////////
+/* INSTANCE METHODS */
+//////////////////////
+
+User.prototype.correctPassword = function (candidatePwd) {
+  return User.encryptPassword(candidatePwd, this.salt()) === this.password()
+}

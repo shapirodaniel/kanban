@@ -30,3 +30,13 @@ router.post('/', async (req, res, next) => {
     next(err)
   }
 })
+
+router.put('/:id/invitations', async (req, res, next) => {
+  try {
+    const {organizationId, didAccept} = req.body
+    await User.handleInvitation(+req.params.id, organizationId, didAccept)
+    res.sendStatus(200)
+  } catch (err) {
+    next(err)
+  }
+})
