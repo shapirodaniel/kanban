@@ -24,6 +24,8 @@ router.get('/:id', async (req, res, next) => {
   }
 })
 
+/* may not need the next two */
+
 // GET single project's columns
 router.get('/:id/columns', async (req, res, next) => {
   try {
