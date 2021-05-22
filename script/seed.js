@@ -8,8 +8,18 @@ async function seed() {
   console.log('db synced!')
 
   const users = await Promise.all([
-    User.create({email: 'cody@email.com', password: '123'}),
-    User.create({email: 'murphy@email.com', password: '123'})
+    User.create({
+      firstName: 'albert',
+      lastName: 'turtlesworth',
+      email: 'albert@albert.com',
+      password: '123'
+    }),
+    User.create({
+      firstName: 'felix',
+      lastName: 'bunnysworth',
+      email: 'felix@felix.com',
+      password: '123'
+    })
   ])
   console.log(`seeded ${users.length} users`)
 
@@ -25,14 +35,15 @@ async function seed() {
   ])
   console.log(`seeded ${organizations.length} organizations`)
 
-  const projects = await Promise.all([
-    Project.create({
-      name: 'myProject',
-      about: 'a new project',
-      imageUrl: '/default-project.png'
-    })
-  ])
-  console.log(`seeded ${projects.length} organizations`)
+  const project = await Project.create({
+    name: 'myProject',
+    about: 'a new project',
+    imageUrl: '/default-project.png'
+  })
+
+  await project.setOrganization(organizations[0])
+  await project.setUsers(users.map(user => user.id))
+  console.log(`seeded and associated 1 project`)
 
   console.log(`seeded successfully`)
 }

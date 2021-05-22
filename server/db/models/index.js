@@ -14,6 +14,7 @@ const UserOrganization = db.define('user_organization', {
 })
 
 const UserTask = db.define('user_task')
+const UserProject = db.define('user_project')
 
 // associations
 Project.hasMany(Column)
@@ -31,6 +32,9 @@ Project.belongsTo(Organization)
 Organization.belongsToMany(User, {through: UserOrganization})
 User.belongsToMany(Organization, {through: UserOrganization})
 
+Project.belongsToMany(User, {through: UserProject})
+User.belongsToMany(Project, {through: UserProject})
+
 Task.belongsToMany(User, {through: UserTask})
 User.belongsToMany(Task, {through: UserTask})
 
@@ -40,5 +44,7 @@ module.exports = {
   Project,
   Column,
   Task,
-  UserOrganization
+  UserOrganization,
+  UserProject,
+  UserTask
 }

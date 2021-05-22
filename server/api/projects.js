@@ -1,5 +1,5 @@
 const router = require('express').Router()
-const {Project, Column, Task} = require('../db/models')
+const {Project, Column, Task, User} = require('../db/models')
 module.exports = router
 
 // GET all projects
@@ -16,7 +16,15 @@ router.get('/', async (req, res, next) => {
 router.get('/:id', async (req, res, next) => {
   try {
     const foundProject = await Project.findByPk(+req.params.id, {
-      include: [Column, Task]
+      include: [
+        Column,
+        Task,
+        // only fetch user's imageUrl, for task card avatar(s)
+        {
+          model: User,
+          attributes: ['imageUrl']
+        }
+      ]
     })
     res.send(foundProject)
   } catch (err) {

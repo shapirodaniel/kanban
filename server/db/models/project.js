@@ -23,7 +23,7 @@ Project.afterCreate(async project => {
   const defaultTask = {
     name: 'Sample Task',
     description: 'A sample task',
-    assets: ['/sample-asset.png'],
+    assets: ['/assets/sample-task-asset.png'],
     openedBy: 'task daemon',
     lastEdit: Date.now()
   }
