@@ -21,10 +21,9 @@ router.get('/:id', async (req, res, next) => {
       include: [
         Column,
         Task,
-        // only fetch user's imageUrl, for task card avatar(s)
         {
           model: User,
-          // we only want fullName but since it's a virtual field we need to include its deps -- firstName, lastName
+          // since fullName is a virtual field we need to include its the fields we use to build it in our attributes array (firstName, lastName), even though we're not using them directly...
           attributes: ['fullName', 'firstName', 'lastName', 'imageUrl']
         }
       ]
@@ -36,34 +35,33 @@ router.get('/:id', async (req, res, next) => {
 })
 
 // POST create a new project
+/*
+  req.body = {
+    name, about, imageUrl, columnOrder
+  }
+*/
 router.post('/', async (req, res, next) => {
   try {
-    const [project, wasCreated] = await Project.findOrCreate({
-      where: {
-        name: req.body.name
-      },
-      defaults: {
-        ...req.body,
-        imageUrl: '/assets/project-default.png'
-      }
-    })
-    res.status(201).send(project)
+    const newProject = await Project.create(req.body)
+    res.status(201).send(newProject)
   } catch (err) {
     next(err)
   }
 })
 
 // PUT update a single project
+/*
+  req.body = {
+    name, about, imageUrl, columnOrder
+  }
+*/
 router.put('/:id', async (req, res, next) => {
   try {
-    const [numRows, [project]] = await Project.update(req.body, {
-      where: {
-        id: +req.params.id
-      },
-      include: [Column, Task],
-      returning: true
-    })
-    res.status(200).send(project)
+    const updatedProject = await Project.updateAndAssociate(
+      +req.params.id,
+      req.body
+    )
+    res.status(200).send(updatedProject)
   } catch (err) {
     next(err)
   }

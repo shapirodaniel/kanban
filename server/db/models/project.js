@@ -2,11 +2,15 @@ const Sequelize = require('sequelize')
 const db = require('../db')
 const Column = require('./column')
 const Task = require('./task')
+const User = require('./user')
 
 const Project = db.define('project', {
   name: Sequelize.STRING,
   about: Sequelize.TEXT,
-  imageUrl: Sequelize.STRING,
+  imageUrl: {
+    type: Sequelize.STRING,
+    defaultValue: '/assets/project-default.png'
+  },
   // columnOrder is an array of column ids
   columnOrder: Sequelize.ARRAY(Sequelize.INTEGER)
 })
@@ -50,5 +54,30 @@ Project.afterCreate(async project => {
 
   return project
 })
+
+Project.updateAndAssociate = async function (projectId, updateInfo) {
+  const [numRows, [project]] = await this.update(updateInfo, {
+    where: {
+      id: projectId
+    },
+    include: [Column, Task, User],
+    returning: true
+  })
+
+  // we can add/remove columns with columnOrder by waiting to set columns AFTER updating the instance, guaranteeing that we don't inadvertantly remove columns and tasks from our project
+  await project.setColumns(project.columnOrder)
+
+  // after removing columns, we'll check the project tasks
+  // if any task's columnId is NOT in the new project.columns, we'll remove the task's column association
+  // this will allow us to persist versions of the project history containing former columns and tasks
+  const projectTasks = await project.getTasks()
+  projectTasks.forEach(async task => {
+    if (!project.columnOrder.includes(task.columnId)) {
+      await task.setColumn(null)
+    }
+  })
+
+  return project
+}
 
 module.exports = Project

@@ -66,10 +66,9 @@ router.post('/', async (req, res, next) => {
 */
 router.put('/:id', async (req, res, next) => {
   try {
-    const taskId = +req.params.id
     const {updateInfo, assignees} = req.body
     const updatedTask = await Task.updateAndAssociate(
-      taskId,
+      +req.params.id,
       updateInfo,
       assignees
     )
