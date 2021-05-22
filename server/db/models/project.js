@@ -15,6 +15,10 @@ const Project = db.define('project', {
   columnOrder: Sequelize.ARRAY(Sequelize.INTEGER)
 })
 
+///////////
+/* HOOKS */
+///////////
+
 // give each new project default columns and a default task
 Project.afterCreate(async project => {
   const defaultColumns = [
@@ -56,12 +60,10 @@ Project.afterCreate(async project => {
 })
 
 // cascade hard delete to columns, tasks
-// * note * this requires {onDelete: 'CASCADE', hooks: true} on the hasMany association
-Project.beforeDestroy(project => {
-  const columns = project.getColumns()
-  const tasks = project.getTasks()
-
-  console.log('before destroy hook: ', columns, tasks)
+// * note * this requires {onDelete: 'CASCADE', hooks: true} on the Model.hasMany association
+Project.beforeDestroy(async project => {
+  const columns = await project.getColumns()
+  const tasks = await project.getTasks()
 
   columns.forEach(async col => {
     await col.destroy()
@@ -71,6 +73,10 @@ Project.beforeDestroy(project => {
     await task.destroy()
   })
 })
+
+///////////////////
+/* CLASS METHODS */
+///////////////////
 
 Project.updateAndAssociate = async function (projectId, updateInfo) {
   const [numRows, [project]] = await this.update(updateInfo, {

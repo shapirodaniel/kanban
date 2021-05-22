@@ -7,6 +7,10 @@ const Project = require('./project')
 const Column = require('./column')
 const Task = require('./task')
 
+////////////////////
+/* THROUGH TABLES */
+////////////////////
+
 const UserOrganization = db.define('user_organization', {
   role: Sequelize.ENUM('member', 'owner'),
   // status will be used to determine whether a user_organization is an INVITE (with status: pending)
@@ -14,9 +18,12 @@ const UserOrganization = db.define('user_organization', {
 })
 
 const UserTask = db.define('user_task')
+
 const UserProject = db.define('user_project')
 
-// associations
+//////////////////
+/* ASSOCIATIONS */
+//////////////////
 
 // important! https://sequelize.org/master/manual/hooks.html
 // in order to fire beforeDestroy hook we need onDelete, hooks options
