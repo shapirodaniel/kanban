@@ -2,6 +2,16 @@ const router = require('express').Router()
 const {Task, User} = require('../db/models')
 module.exports = router
 
+// GET all tasks
+router.get('/', async (req, res, next) => {
+  try {
+    const tasks = await Task.findAll()
+    res.send(tasks)
+  } catch (err) {
+    next(err)
+  }
+})
+
 // GET a single task
 router.get('/:id', async (req, res, next) => {
   try {
@@ -15,8 +25,13 @@ router.get('/:id', async (req, res, next) => {
 // POST create a new task
 router.post('/', async (req, res, next) => {
   try {
-    const task = await Task.create(req.body)
-    res.status(201).send(task)
+    const {newTask, projectId, columnId} = req.body
+    const createdAndAssociatedTask = await Task.createAndAssociate(
+      newTask,
+      projectId,
+      columnId
+    )
+    res.status(201).send(createdAndAssociatedTask)
   } catch (err) {
     next(err)
   }
