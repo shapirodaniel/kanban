@@ -15,7 +15,14 @@ router.get('/', async (req, res, next) => {
 // GET a single task
 router.get('/:id', async (req, res, next) => {
   try {
-    const foundTask = await Task.findByPk(+req.params.id, {include: [User]})
+    const foundTask = await Task.findByPk(+req.params.id, {
+      include: [
+        {
+          model: User,
+          attributes: ['fullName', 'firstName', 'lastName', 'imageUrl']
+        }
+      ]
+    })
     res.send(foundTask)
   } catch (err) {
     next(err)

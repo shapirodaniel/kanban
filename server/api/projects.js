@@ -5,7 +5,9 @@ module.exports = router
 // GET all projects
 router.get('/', async (req, res, next) => {
   try {
-    const projects = await Project.findAll()
+    const projects = await Project.findAll({
+      attributes: ['name', 'about', 'imageUrl']
+    })
     res.send(projects)
   } catch (err) {
     next(err)
@@ -22,7 +24,8 @@ router.get('/:id', async (req, res, next) => {
         // only fetch user's imageUrl, for task card avatar(s)
         {
           model: User,
-          attributes: ['imageUrl']
+          // we only want fullName but since it's a virtual field we need to include its deps -- firstName, lastName
+          attributes: ['fullName', 'firstName', 'lastName', 'imageUrl']
         }
       ]
     })

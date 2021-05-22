@@ -28,26 +28,24 @@ Project.afterCreate(async project => {
     lastEdit: Date.now()
   }
 
+  // create default columns and default task
   const createdDefaultColumns = await Column.bulkCreate(defaultColumns, {
     returning: true
   })
-
   const createdDefaultTask = await Task.create(defaultTask, {returning: true})
 
+  // add default task to first default column
   await createdDefaultColumns[0].setTasks([createdDefaultTask.id])
 
+  // update first default column taskOrder
   createdDefaultColumns[0].taskOrder = [createdDefaultTask.id]
-
   await createdDefaultColumns[0].save()
 
+  // set project's columnOrder field and associate default columns, task
   const columnOrder = createdDefaultColumns.map(column => column.id)
-
   await project.setColumns(columnOrder)
-
   await project.setTasks([createdDefaultTask.id])
-
   project.columnOrder = columnOrder
-
   await project.save()
 
   return project
