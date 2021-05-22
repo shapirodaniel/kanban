@@ -23,6 +23,16 @@ router.get('/:id', async (req, res, next) => {
 })
 
 // POST create a new task
+/*
+  req.body = {
+    newTask: {
+      name, description, openedBy, lastEdit
+    },
+    projectId,
+    columnId,
+    assignees?: [...taskIds]
+  }
+*/
 router.post('/', async (req, res, next) => {
   try {
     const {newTask, projectId, columnId, assignees} = req.body

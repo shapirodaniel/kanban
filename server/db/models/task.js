@@ -20,7 +20,7 @@ Task.createAndAssociate = async function (
   const task = await this.create(newTask)
   await task.setProject(projectId)
   await task.setColumn(columnId)
-  await task.setUsers(assignees)
+  if (assignees) await task.setUsers(assignees)
 
   // fetch column and add task to taskOrder array
   const foundColumn = await Column.findByPk(+columnId)
