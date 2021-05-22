@@ -49,16 +49,24 @@ router.post('/', async (req, res, next) => {
 })
 
 // UPDATE a single task
+/*
+  req.body = {
+    updateInfo: {
+        ...fields
+    },
+    assignees: [...userIds]
+  }
+*/
 router.put('/:id', async (req, res, next) => {
   try {
-    const [numRows, [task]] = await Task.update(req.body, {
-      where: {
-        id: +req.params.id
-      },
-      include: [User],
-      returning: true
-    })
-    res.status(200).send(task)
+    const taskId = +req.params.id
+    const {updateInfo, assignees} = req.body
+    const updatedTask = await Task.updateAndAssociate(
+      taskId,
+      updateInfo,
+      assignees
+    )
+    res.status(200).send(updatedTask)
   } catch (err) {
     next(err)
   }

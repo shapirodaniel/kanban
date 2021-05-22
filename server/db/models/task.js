@@ -1,6 +1,7 @@
 const Sequelize = require('sequelize')
 const db = require('../db')
 const Column = require('./column')
+const User = require('./user')
 
 const Task = db.define('task', {
   name: Sequelize.STRING,
@@ -27,6 +28,23 @@ Task.createAndAssociate = async function (
   foundColumn.taskOrder = [...foundColumn.taskOrder, task.id]
   await foundColumn.save()
 
+  return task
+}
+
+Task.updateAndAssociate = async function (taskId, updateInfo, assignees) {
+  // update task instance
+  const [numRows, [task]] = await this.update(updateInfo, {
+    where: {
+      id: taskId
+    },
+    include: [User],
+    returning: true
+  })
+
+  // if assignees, reassign tasks's users
+  // allows for adding and/or deleting users
+  // just pass the assignees array [...userIds]
+  if (assignees) await task.setUsers(assignees)
   return task
 }
 
