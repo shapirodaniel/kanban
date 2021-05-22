@@ -16,7 +16,7 @@ Task.createAndAssociate = async function (
   columnId,
   assignees
 ) {
-  // create task and associate to project, column
+  // create task and associate to project, column, and associate users through supplied userIds as assignees
   const task = await this.create(newTask)
   await task.setProject(projectId)
   await task.setColumn(columnId)
