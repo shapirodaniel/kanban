@@ -14,7 +14,7 @@ router.get('/', async (req, res, next) => {
 router.get('/:id', async (req, res, next) => {
   try {
     const foundOrganization = await Organization.findByPk(+req.params.id, {
-      include: [Project]
+      include: [Project, UserOrganization]
     })
     res.send(foundOrganization)
   } catch (err) {
@@ -30,9 +30,10 @@ router.post('/', async (req, res, next) => {
       },
       defaults: {
         ...req.body,
-        imageUrl: 'https://source.unsplash.com/random/400x400?nature,water'
+        imageUrl: '/assets/org-default.png'
       }
     })
+
     res.status(201).send(organization)
   } catch (err) {
     next(err)
