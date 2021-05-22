@@ -13,6 +13,8 @@ const UserOrganization = db.define('user_organization', {
   status: Sequelize.ENUM('pending', 'active')
 })
 
+const UserTask = db.define('user_task')
+
 // associations
 Project.hasMany(Column)
 Column.belongsTo(Project)
@@ -29,8 +31,8 @@ Project.belongsTo(Organization)
 Organization.belongsToMany(User, {through: UserOrganization})
 User.belongsToMany(Organization, {through: UserOrganization})
 
-Task.belongsToMany(User, {through: 'UserTask'})
-User.belongsToMany(Task, {through: 'UserTask'})
+Task.belongsToMany(User, {through: UserTask})
+User.belongsToMany(Task, {through: UserTask})
 
 module.exports = {
   User,

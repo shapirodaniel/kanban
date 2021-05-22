@@ -15,7 +15,7 @@ router.get('/', async (req, res, next) => {
 // GET a single task
 router.get('/:id', async (req, res, next) => {
   try {
-    const foundTask = await Task.findByPk(+req.params.id)
+    const foundTask = await Task.findByPk(+req.params.id, {include: [User]})
     res.send(foundTask)
   } catch (err) {
     next(err)
@@ -25,11 +25,12 @@ router.get('/:id', async (req, res, next) => {
 // POST create a new task
 router.post('/', async (req, res, next) => {
   try {
-    const {newTask, projectId, columnId} = req.body
+    const {newTask, projectId, columnId, assignees} = req.body
     const createdAndAssociatedTask = await Task.createAndAssociate(
       newTask,
       projectId,
-      columnId
+      columnId,
+      assignees
     )
     res.status(201).send(createdAndAssociatedTask)
   } catch (err) {

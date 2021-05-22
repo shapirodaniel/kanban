@@ -10,11 +10,17 @@ const Task = db.define('task', {
   lastEdit: Sequelize.DATE
 })
 
-Task.createAndAssociate = async function (newTask, projectId, columnId) {
+Task.createAndAssociate = async function (
+  newTask,
+  projectId,
+  columnId,
+  assignees
+) {
   // create task and associate to project, column
   const task = await this.create(newTask)
   await task.setProject(projectId)
   await task.setColumn(columnId)
+  await task.setUsers(assignees)
 
   // fetch column and add task to taskOrder array
   const foundColumn = await Column.findByPk(+columnId)
