@@ -1,7 +1,8 @@
 const router = require('express').Router()
-const {Organization, UserOrganization, Project} = require('../db/models')
+const {Organization, User, UserOrganization, Project} = require('../db/models')
 module.exports = router
 
+// GET all organizations
 router.get('/', async (req, res, next) => {
   try {
     const organizations = await Organization.findAll()
@@ -11,10 +12,11 @@ router.get('/', async (req, res, next) => {
   }
 })
 
+// GET a single organization with associated projects, users, userOrgs
 router.get('/:id', async (req, res, next) => {
   try {
     const foundOrganization = await Organization.findByPk(+req.params.id, {
-      include: [Project, UserOrganization]
+      include: [Project, User, UserOrganization]
     })
     res.send(foundOrganization)
   } catch (err) {
@@ -22,6 +24,7 @@ router.get('/:id', async (req, res, next) => {
   }
 })
 
+// CREATE a new organization
 router.post('/', async (req, res, next) => {
   try {
     const [organization, wasCreated] = await Organization.findOrCreate({
@@ -33,13 +36,13 @@ router.post('/', async (req, res, next) => {
         imageUrl: '/assets/org-default.png'
       }
     })
-
     res.status(201).send(organization)
   } catch (err) {
     next(err)
   }
 })
 
+// UPDATE a single organization
 router.put('/:id', async (req, res, next) => {
   try {
     const [numRows, [organization]] = await Organization.update(req.body, {
@@ -55,6 +58,7 @@ router.put('/:id', async (req, res, next) => {
   }
 })
 
+// DELETE a single organization
 router.delete('/:id', async (req, res, next) => {
   try {
     await Organization.destroy({
