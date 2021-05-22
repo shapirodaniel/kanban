@@ -100,6 +100,18 @@ Project.updateAndAssociate = async function (projectId, updateInfo) {
     }
   })
 
+  // finally, we'll delete all columns that don't have a projectId
+  // as those are the columns we've removed with setColumns()
+  const unassociatedColumns = await Column.findAll({
+    where: {
+      projectId: null
+    }
+  })
+
+  unassociatedColumns.forEach(async column => {
+    await column.destroy()
+  })
+
   return project
 }
 
