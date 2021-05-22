@@ -65,8 +65,8 @@ router.post('/:id/invite', async (req, res, next) => {
     if (isNaN(req.params.id)) {
       return res.sendStatus(404)
     }
-    await Organization.inviteUser(+req.params.id, req.body.email)
-    console.log(await Organization.findByPk(+req.params.id))
+    const {email, role} = req.body
+    await Organization.inviteUser(+req.params.id, email, role)
     res.sendStatus(200)
   } catch (err) {
     next(err)

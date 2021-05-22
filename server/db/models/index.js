@@ -1,6 +1,4 @@
-const Sequelize = require('sequelize')
 const db = require('../db')
-
 const User = require('./user')
 const Organization = require('./organization')
 const Project = require('./project')
@@ -11,14 +9,9 @@ const Task = require('./task')
 /* THROUGH TABLES */
 ////////////////////
 
-const UserOrganization = db.define('user_organization', {
-  role: Sequelize.ENUM('member', 'owner'),
-  // status will be used to determine whether a user_organization is an INVITE (with status: pending)
-  status: Sequelize.ENUM('pending', 'active')
-})
+const UserOrganization = require('./userOrganization')
 
 const UserTask = db.define('user_task')
-
 const UserProject = db.define('user_project')
 
 //////////////////
