@@ -15,3 +15,18 @@ router.get('/', async (req, res, next) => {
     next(err)
   }
 })
+
+router.post('/', async (req, res, next) => {
+  try {
+    const [user, wasCreated] = await User.findOrCreate({
+      where: {
+        email: req.body.email
+      },
+      defaults: {...req.body}
+    })
+    res.status = wasCreated ? 204 : 200
+    res.send(user)
+  } catch (err) {
+    next(err)
+  }
+})

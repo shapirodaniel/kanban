@@ -58,6 +58,21 @@ router.put('/:id', async (req, res, next) => {
   }
 })
 
+// INVITE a user to join an org
+// expects req.body = { email }
+router.post('/:id/invite', async (req, res, next) => {
+  try {
+    if (isNaN(req.params.id)) {
+      return res.sendStatus(404)
+    }
+    await Organization.inviteUser(+req.params.id, req.body.email)
+    console.log(await Organization.findByPk(+req.params.id))
+    res.sendStatus(200)
+  } catch (err) {
+    next(err)
+  }
+})
+
 // DELETE a single organization
 router.delete('/:id', async (req, res, next) => {
   try {
