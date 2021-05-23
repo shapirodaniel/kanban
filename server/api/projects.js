@@ -6,7 +6,7 @@ module.exports = router
 router.get('/', async (req, res, next) => {
   try {
     const projects = await Project.findAll({
-      attributes: ['name', 'about', 'imageUrl']
+      attributes: ['id', 'name', 'about', 'imageUrl']
     })
     res.send(projects)
   } catch (err) {

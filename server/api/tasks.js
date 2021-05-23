@@ -19,7 +19,7 @@ router.get('/:id', async (req, res, next) => {
       include: [
         {
           model: User,
-          attributes: ['fullName', 'firstName', 'lastName', 'imageUrl']
+          attributes: ['id', 'fullName', 'firstName', 'lastName', 'imageUrl']
         },
         {
           model: Column

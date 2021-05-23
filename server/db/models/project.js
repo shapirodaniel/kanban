@@ -85,8 +85,8 @@ Project.getSingleProjectAndAssociations = async function (projectId) {
         model: Column,
         include: {
           model: Task,
-          attributes: ['name', 'openedBy'],
-          include: {model: User, attributes: ['imageUrl']}
+          attributes: ['id', 'name', 'openedBy'],
+          include: {model: User, attributes: ['id', 'imageUrl']}
         }
       }
     ]
@@ -94,7 +94,7 @@ Project.getSingleProjectAndAssociations = async function (projectId) {
 
   const tasksWithoutColumns = await foundProject.getTasks({
     where: {columnId: null},
-    include: {model: User, attributes: ['imageUrl']}
+    include: {model: User, attributes: ['id', 'imageUrl']}
   })
 
   return {
