@@ -71,7 +71,7 @@ const Main = () => {
     const newColumnOrder = [...columnOrderArray]
     newColumnOrder.splice(source.index, 1)
     // coerce draggableId back to num with unary operator
-    newColumnOrder.splice(destination.index, 0, +draggableId)
+    newColumnOrder.splice(destination.index, 0, draggableId)
     dispatch(
       fetchUpdateCurrentProject(project.id, {
         columnOrder: newColumnOrder
@@ -84,7 +84,7 @@ const Main = () => {
     const updatedTaskOrder = [...taskOrderArray]
 
     updatedTaskOrder.splice(source.index, 1)
-    updatedTaskOrder.splice(destination.index, 0, +draggableId)
+    updatedTaskOrder.splice(destination.index, 0, draggableId)
 
     return console.log('updatedTaskOrder is: ', updatedTaskOrder)
     // PUT Task.reorder
@@ -132,7 +132,7 @@ const Main = () => {
 
     const updatedFinishColTaskOrder = [...finishCol.taskOrder]
     // coerce draggableId to number here
-    updatedFinishColTaskOrder.splice(destination.index, 0, +draggableId)
+    updatedFinishColTaskOrder.splice(destination.index, 0, draggableId)
 
     return console.log(
       'updated start col task order is: ',
