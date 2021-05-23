@@ -11,6 +11,10 @@ const Task = db.define('task', {
   lastEdit: Sequelize.DATE
 })
 
+///////////////////
+/* CLASS METHODS */
+///////////////////
+
 // board view only
 Task.createAndAssociate = async function (
   newTask,
@@ -44,7 +48,7 @@ Task.updateAndAssociate = async function (taskId, updateInfo, assignees) {
   })
 
   // if assignees, reassign tasks's users
-  // allows for adding and/or deleting users
+  // allows for adding and/or removing users
   // just pass the assignees array [...userIds]
   if (assignees) await task.setUsers(assignees)
   return task
@@ -96,6 +100,7 @@ Task.reorder = async function (
   handleReorder(destTaskOrder, destCol)
 }
 
+// this method can be used in either the board view or the single task view
 Task.deleteAndReorderSourceCol = async function (
   taskId,
   sourceColId,
