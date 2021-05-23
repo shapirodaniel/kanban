@@ -1,8 +1,7 @@
 /* eslint-disable complexity */
-import React, {useState, useEffect} from 'react'
+import React, {useEffect} from 'react'
 import styled from 'styled-components'
 import Column from './Column'
-import {initialData} from './initialData'
 
 import {DragDropContext, Droppable} from 'react-beautiful-dnd'
 
@@ -96,11 +95,17 @@ const Main = () => {
       return console.log('new column order is: ', newColumnOrder)
     }
 
-    console.log(source.droppableId, destination.droppableId)
+    console.log(
+      'droppable source/destination ids are: ',
+      source.droppableId,
+      destination.droppableId
+    )
 
     // otherwise, define start and end cols for task reordering
     const startCol = project.columns[source.index]
     const finishCol = project.columns[destination.index]
+
+    console.log('start and finish cols are: ', startCol, finishCol)
 
     // if dropped in same column
     if (startCol.taskOrder && startCol.id === finishCol.id) {
@@ -145,17 +150,6 @@ const Main = () => {
           <Container {...provided.droppableProps} ref={provided.innerRef}>
             {project.columnOrder &&
               project.columnOrder.map((columnId, index) => {
-                // grab column by columnOrder id
-                const column = project.columns.find(col => col.id === columnId)
-
-                // grab column tasks and order by taskIds on column
-                // important! ternary guarantees an array if taskOrder is NULL
-                const tasks = column.taskOrder
-                  ? column.taskOrder.map(taskId =>
-                      column.tasks.find(task => task.id === taskId)
-                    )
-                  : []
-
                 /*
                   // for example, this prevents moving tasks left
                   const isDropDisabled = index < state.homeIndex;
@@ -163,9 +157,8 @@ const Main = () => {
 
                 return (
                   <Column
-                    key={column.id}
-                    column={column}
-                    tasks={tasks}
+                    key={columnId}
+                    columnId={columnId}
                     // isDropDisabled={isDropDisabled}
                     index={index}
                   />

@@ -12,7 +12,10 @@ const Project = db.define('project', {
     defaultValue: '/assets/project-default.png'
   },
   // columnOrder is an array of column ids
-  columnOrder: Sequelize.ARRAY(Sequelize.INTEGER)
+  columnOrder: {
+    type: Sequelize.ARRAY(Sequelize.INTEGER),
+    defaultValue: []
+  }
 })
 
 ///////////

@@ -3,6 +3,8 @@ import styled from 'styled-components'
 import Task from './Task'
 import {Droppable, Draggable} from 'react-beautiful-dnd'
 
+import {useSelector, useDispatch} from 'react-redux'
+
 const Container = styled.div`
   margin: 8px;
   border: 1px solid lightgrey;
@@ -31,7 +33,11 @@ const TaskList = styled.div`
   min-height: 100px;
 `
 
-const Column = ({column, index, tasks /* isDropDisabled */}) => {
+const Column = ({columnId, index /* isDropDisabled */}) => {
+  const column = useSelector(state =>
+    state.project.columns.find(col => col.id === columnId)
+  )
+
   return (
     <Draggable draggableId={String(column.id)} index={index}>
       {provided => (
@@ -55,9 +61,9 @@ const Column = ({column, index, tasks /* isDropDisabled */}) => {
                 {...provided.droppableProps}
                 isDraggingOver={snapshot.isDraggingOver}
               >
-                {tasks.map((task, index) => (
-                  <Task key={task.id} task={task} index={index} />
-                ))}
+                {column.taskOrder.map((taskId, index) => {
+                  return <Task key={taskId} taskId={taskId} index={index} />
+                })}
                 {/* placeholder is a react element used to increase available
 								space of a droppable during drag as needed --
 								must be added a child of the droppable component */}

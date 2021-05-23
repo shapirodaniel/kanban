@@ -3,6 +3,8 @@ import styled from 'styled-components'
 import {Draggable} from 'react-beautiful-dnd'
 import TaskContent from './TaskContent'
 
+import {useSelector, useDispatch} from 'react-redux'
+
 const Container = styled.div`
   border: 1px solid lightgrey;
   border-radius: 2px;
@@ -27,10 +29,17 @@ const Container = styled.div`
 	margin-right: 8px;
 `; */
 
-const Task = ({task, index}) => {
+const Task = ({taskId, index}) => {
   // for example
   // disable drag on a task by id
-  const isDragDisabled = task.id === 'task-1'
+  const isDragDisabled = taskId === 'myTaskId'
+
+  const task = useSelector(state =>
+    state.project.columns
+      .map(col => col.tasks)
+      .flat()
+      .find(t => t.id === taskId)
+  )
 
   return (
     <Draggable
