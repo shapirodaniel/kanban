@@ -1,5 +1,5 @@
 const router = require('express').Router()
-const {Task, User} = require('../db/models')
+const {Task, User, Column} = require('../db/models')
 module.exports = router
 
 // GET all tasks
@@ -12,7 +12,7 @@ router.get('/', async (req, res, next) => {
   }
 })
 
-// GET a single task
+// GET a single task and its assignees
 router.get('/:id', async (req, res, next) => {
   try {
     const foundTask = await Task.findByPk(+req.params.id, {
@@ -20,6 +20,9 @@ router.get('/:id', async (req, res, next) => {
         {
           model: User,
           attributes: ['fullName', 'firstName', 'lastName', 'imageUrl']
+        },
+        {
+          model: Column
         }
       ]
     })
@@ -29,7 +32,7 @@ router.get('/:id', async (req, res, next) => {
   }
 })
 
-// POST create a new task
+// POST create a new task from add task modal in board view
 /*
   req.body = {
     newTask: {
@@ -75,6 +78,7 @@ router.put('/:id', async (req, res, next) => {
 })
 
 // UPDATE assign task to column, move task within column, or move task from column to another column
+// (in board view only)
 router.put('/:id/reorder', async (req, res, next) => {
   try {
     const {sourceColId, destColId, sourceTaskOrder, destTaskOrder} = req.body
@@ -91,18 +95,20 @@ router.put('/:id/reorder', async (req, res, next) => {
   }
 })
 
-// DELETE a single task
-// if using axios, configure the request as follows:
+// DELETE a single task from either board view or single task view
+// since column is included in the single task GET route above, we'll have access to sourceColId and sourceTaskOrder
 /*
+  important! if using axios, configure the request as follows:
+
   axios.delete(
     '/tasks/${taskId}',
 
-    // send an object with data key and payload
-    // where payload is req.body
+    // send an object with data keyed to payload, where payload will be req.body
     { data: { sourceColId, sourceTaskOrder } }
   )
- */
-// if using postman or another client-test interface, configure request as usual (directly on body)
+
+  if using postman or another client-test interface, configure request as usual (directly on body)
+*/
 router.delete('/:id', async (req, res, next) => {
   try {
     const {sourceColId, sourceTaskOrder} = req.body
