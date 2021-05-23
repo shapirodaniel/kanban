@@ -92,13 +92,25 @@ router.put('/:id/reorder', async (req, res, next) => {
 })
 
 // DELETE a single task
+// if using axios, configure the request as follows:
+/*
+  axios.delete(
+    '/tasks/${taskId}',
+
+    // send an object with data key and payload
+    // where payload is req.body
+    { data: { sourceColId, sourceTaskOrder } }
+  )
+ */
+// if using postman or another client-test interface, configure request as usual (directly on body)
 router.delete('/:id', async (req, res, next) => {
   try {
-    await Task.destroy({
-      where: {
-        id: +req.params.id
-      }
-    })
+    const {sourceColId, sourceTaskOrder} = req.body
+    await Task.deleteAndReorderSourceCol(
+      +req.params.id,
+      sourceColId,
+      sourceTaskOrder
+    )
     res.sendStatus(204)
   } catch (err) {
     next(err)

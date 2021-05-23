@@ -96,4 +96,21 @@ Task.reorder = async function (
   handleReorder(destTaskOrder, destCol)
 }
 
+Task.deleteAndReorderSourceCol = async function (
+  taskId,
+  sourceColId,
+  sourceTaskOrder
+) {
+  const task = await Task.findByPk(taskId)
+  const sourceCol = await Column.findByPk(sourceColId)
+
+  if (!(task || sourceCol)) {
+    throw new Error('Task or source column instance not found!')
+  }
+
+  await task.destroy()
+  sourceCol.taskOrder = sourceTaskOrder
+  await sourceCol.save()
+}
+
 module.exports = Task
