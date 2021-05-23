@@ -1,9 +1,8 @@
 const router = require('express').Router()
-const {Op} = require('sequelize')
-const {Project, Column, Task, User} = require('../db/models')
+const {Project} = require('../db/models')
 module.exports = router
 
-// GET all projects
+// GET all projects for single org view project cards
 router.get('/', async (req, res, next) => {
   try {
     const projects = await Project.findAll({
