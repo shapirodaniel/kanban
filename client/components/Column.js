@@ -35,11 +35,8 @@ const TaskList = styled.div`
 
 const Column = ({columnUUID, index /* isDropDisabled */}) => {
   const column = useSelector(state => {
-    console.log(state.project)
     return state.project.columns.find(col => col.draggableId === columnUUID)
   })
-
-  console.log(column)
 
   return column && column.draggableId ? (
     <Draggable draggableId={column.draggableId} index={index}>

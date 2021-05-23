@@ -30,13 +30,9 @@ const Main = () => {
     }
   }, [])
 
-  // we can fetch the project :)
-  console.log(project)
-
   // we'll use this function to send socket messages and prevent drag on the same card simultaneously
   const onDragStart = start => {
     const {draggableId} = start
-    console.log('draggableId is: ', draggableId)
   }
 
   /*
@@ -67,7 +63,6 @@ const Main = () => {
     destination,
     draggableId
   ) => {
-    console.log('column drag detected!')
     const newColumnOrder = [...columnOrderArray]
     newColumnOrder.splice(source.index, 1)
     // coerce draggableId back to num with unary operator
@@ -77,7 +72,6 @@ const Main = () => {
         columnOrder: newColumnOrder
       })
     )
-    return console.log('new column order is: ', newColumnOrder)
   }
 
   const handleTaskDrag = (taskOrderArray, source, destination, draggableId) => {
@@ -107,13 +101,12 @@ const Main = () => {
 
     // for column reordering
     if (type === 'column') {
-      handleColumnDrag(project.columnOrder, source, destination, draggableId)
-      console.log(
-        'droppable source/destination ids are: ',
-        source.droppableId,
-        destination.droppableId
+      return handleColumnDrag(
+        project.columnOrder,
+        source,
+        destination,
+        draggableId
       )
-      return
     }
 
     // otherwise, define start and end cols for task reordering
@@ -122,8 +115,12 @@ const Main = () => {
 
     // if dropped in same column
     if (startCol.id === finishCol.id) {
-      handleTaskDrag(startCol.taskOrder, source, destination, draggableId)
-      return
+      return handleTaskDrag(
+        startCol.taskOrder,
+        source,
+        destination,
+        draggableId
+      )
     }
 
     // finally, if we end up here, a task was dragged between columns
