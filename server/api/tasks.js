@@ -6,7 +6,7 @@ module.exports = router
 router.get('/', async (req, res, next) => {
   try {
     const tasks = await Task.findAll()
-    res.send(tasks)
+    res.status(200).send(tasks)
   } catch (err) {
     next(err)
   }
@@ -23,7 +23,7 @@ router.get('/:id', async (req, res, next) => {
         }
       ]
     })
-    res.send(foundTask)
+    res.status(200).send(foundTask)
   } catch (err) {
     next(err)
   }
@@ -55,7 +55,7 @@ router.post('/', async (req, res, next) => {
   }
 })
 
-// UPDATE a single task
+// UPDATE a single task in single task view
 /*
   req.body = {
     updateInfo: {
@@ -67,12 +67,25 @@ router.post('/', async (req, res, next) => {
 router.put('/:id', async (req, res, next) => {
   try {
     const {updateInfo, assignees} = req.body
-    const updatedTask = await Task.updateAndAssociate(
+    await Task.updateAndAssociate(+req.params.id, updateInfo, assignees)
+    res.sendStatus(200)
+  } catch (err) {
+    next(err)
+  }
+})
+
+// UPDATE assign task to column, move task within column, or move task from column to another column
+router.put('/:id/reorder', async (req, res, next) => {
+  try {
+    const {sourceColId, destColId, sourceTaskOrder, destTaskOrder} = req.body
+    await Task.reorder(
       +req.params.id,
-      updateInfo,
-      assignees
+      sourceColId,
+      sourceTaskOrder,
+      destColId,
+      destTaskOrder
     )
-    res.status(200).send(updatedTask)
+    res.sendStatus(200)
   } catch (err) {
     next(err)
   }

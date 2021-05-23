@@ -7,4 +7,8 @@ const Column = db.define('column', {
   taskOrder: Sequelize.ARRAY(Sequelize.INTEGER)
 })
 
+///////////////////
+/* CLASS METHODS */
+///////////////////
+
 module.exports = Column

@@ -11,6 +11,7 @@ const Task = db.define('task', {
   lastEdit: Sequelize.DATE
 })
 
+// board view only
 Task.createAndAssociate = async function (
   newTask,
   projectId,
@@ -31,6 +32,7 @@ Task.createAndAssociate = async function (
   return task
 }
 
+// single task view only
 Task.updateAndAssociate = async function (taskId, updateInfo, assignees) {
   // update task instance
   const [numRows, [task]] = await this.update(updateInfo, {
@@ -46,6 +48,52 @@ Task.updateAndAssociate = async function (taskId, updateInfo, assignees) {
   // just pass the assignees array [...userIds]
   if (assignees) await task.setUsers(assignees)
   return task
+}
+
+// helper for reorder method below
+// we could put this method on the Column prototype, but it's clearer to state the method standalone here, rather than hide this logic in the Column model
+const handleReorder = async (taskOrderArray, columnInstance) => {
+  if (!taskOrderArray.length) {
+    await columnInstance.removeTasks()
+  } else {
+    columnInstance.taskOrder = taskOrderArray
+    await columnInstance.save()
+  }
+}
+
+// board view only
+Task.reorder = async function (
+  taskId,
+  sourceColId,
+  sourceTaskOrder,
+  destColId,
+  destTaskOrder
+) {
+  // grab task and columns
+  const task = await Task.findByPk(taskId)
+  const sourceCol = await Column.findByPk(sourceColId)
+
+  if (!(task || sourceCol)) {
+    throw new Error('Task or source column instance not found!')
+  }
+
+  // if no destination column id provided, task has been moved within a single column and we'll only need to persist the new taskOrder of the source column
+  if (!destColId) {
+    // we still need to set the column for the task, since it's possible that the task's columnId was NULL!
+    task.setColumn(sourceCol.id)
+    return handleReorder(sourceTaskOrder, sourceCol)
+  }
+
+  // else, task has been moved between columns and we'll need to reassign source and destination column tasks and taskOrders
+  const destCol = await Column.findByPk(destColId)
+
+  if (!destCol) {
+    throw new Error('Destination column instance not found!')
+  }
+
+  task.setColumn(destCol.id)
+  handleReorder(sourceTaskOrder, sourceCol)
+  handleReorder(destTaskOrder, destCol)
 }
 
 module.exports = Task

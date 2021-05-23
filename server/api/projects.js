@@ -1,4 +1,5 @@
 const router = require('express').Router()
+const {Op} = require('sequelize')
 const {Project, Column, Task, User} = require('../db/models')
 module.exports = router
 
@@ -17,27 +18,19 @@ router.get('/', async (req, res, next) => {
 // GET single project with associated columns and tasks
 router.get('/:id', async (req, res, next) => {
   try {
-    const foundProject = await Project.findByPk(+req.params.id, {
-      include: [
-        Column,
-        Task,
-        {
-          model: User,
-          // since fullName is a virtual field we need to include its the fields we use to build it in our attributes array (firstName, lastName), even though we're not using them directly...
-          attributes: ['fullName', 'firstName', 'lastName', 'imageUrl']
-        }
-      ]
-    })
-    res.send(foundProject)
+    const projectAndTasks = await Project.getSingleProjectAndAssociations(
+      +req.params.id
+    )
+    res.status(200).send(projectAndTasks)
   } catch (err) {
     next(err)
   }
 })
 
-// POST create a new project
+// POST create a new project from single org view
 /*
   req.body = {
-    name, about, imageUrl, columnOrder
+    name, about, imageUrl
   }
 */
 router.post('/', async (req, res, next) => {
@@ -50,6 +43,8 @@ router.post('/', async (req, res, next) => {
 })
 
 // PUT update a single project
+// update name, about, imageUrl in single org view
+// update columnOrder in board view
 /*
   req.body = {
     name, about, imageUrl, columnOrder
@@ -57,17 +52,18 @@ router.post('/', async (req, res, next) => {
 */
 router.put('/:id', async (req, res, next) => {
   try {
-    const updatedProject = await Project.updateAndAssociate(
-      +req.params.id,
-      req.body
-    )
-    res.status(200).send(updatedProject)
+    await Project.update(req.body, {
+      where: {
+        id: +req.params.id
+      }
+    })
+    res.sendStatus(200)
   } catch (err) {
     next(err)
   }
 })
 
-// DELETE a single project
+// DELETE a single project from single org view
 router.delete('/:id', async (req, res, next) => {
   try {
     await Project.destroy({

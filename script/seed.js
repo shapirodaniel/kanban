@@ -42,7 +42,6 @@ async function seed() {
   })
 
   await project.setOrganization(organizations[0])
-  await project.setUsers(users.map(user => user.id))
   console.log(`seeded and associated 1 project`)
 
   console.log(`seeded successfully`)

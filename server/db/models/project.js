@@ -78,41 +78,29 @@ Project.beforeDestroy(async project => {
 /* CLASS METHODS */
 ///////////////////
 
-Project.updateAndAssociate = async function (projectId, updateInfo) {
-  const [numRows, [project]] = await this.update(updateInfo, {
-    where: {
-      id: projectId
-    },
-    include: [Column, Task, User],
-    returning: true
+Project.getSingleProjectAndAssociations = async function (projectId) {
+  const foundProject = await this.findByPk(projectId, {
+    include: [
+      {
+        model: Column,
+        include: {
+          model: Task,
+          attributes: ['name', 'openedBy'],
+          include: {model: User, attributes: ['imageUrl']}
+        }
+      }
+    ]
   })
 
-  // we can add/remove columns with columnOrder by waiting to set columns AFTER updating the instance, guaranteeing that we don't inadvertantly remove columns and tasks from our project
-  await project.setColumns(project.columnOrder)
-
-  // after removing columns, we'll check the project tasks
-  // if any task's columnId is NOT in the new project.columns, we'll remove the task's column association
-  // this will allow us to persist versions of the project history containing former columns and tasks
-  const projectTasks = await project.getTasks()
-  projectTasks.forEach(async task => {
-    if (!project.columnOrder.includes(task.columnId)) {
-      await task.setColumn(null)
-    }
+  const tasksWithoutColumns = await foundProject.getTasks({
+    where: {columnId: null},
+    include: {model: User, attributes: ['imageUrl']}
   })
 
-  // finally, we'll delete all columns that don't have a projectId
-  // as those are the columns we've removed with setColumns()
-  const unassociatedColumns = await Column.findAll({
-    where: {
-      projectId: null
-    }
-  })
-
-  unassociatedColumns.forEach(async column => {
-    await column.destroy()
-  })
-
-  return project
+  return {
+    ...foundProject.dataValues,
+    tasksWithoutColumns: tasksWithoutColumns
+  }
 }
 
 module.exports = Project
