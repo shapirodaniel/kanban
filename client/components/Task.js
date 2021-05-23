@@ -29,21 +29,21 @@ const Container = styled.div`
 	margin-right: 8px;
 `; */
 
-const Task = ({taskId, index}) => {
+const Task = ({taskUUID, index}) => {
   // for example
   // disable drag on a task by id
-  const isDragDisabled = taskId === 'myTaskId'
+  const isDragDisabled = taskUUID === 'myTaskId'
 
   const task = useSelector(state =>
     state.project.columns
       .map(col => col.tasks)
       .flat()
-      .find(t => t.id === taskId)
+      .find(t => t.draggableId === taskUUID)
   )
 
   return (
     <Draggable
-      draggableId={String(task.id)}
+      draggableId={task.draggableId}
       index={index}
       isDragDisabled={isDragDisabled}
     >

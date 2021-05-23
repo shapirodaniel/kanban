@@ -13,7 +13,7 @@ const Project = db.define('project', {
   },
   // columnOrder is an array of column ids
   columnOrder: {
-    type: Sequelize.ARRAY(Sequelize.INTEGER),
+    type: Sequelize.ARRAY(Sequelize.UUID),
     defaultValue: []
   }
 })
@@ -49,14 +49,14 @@ Project.afterCreate(async project => {
   await createdDefaultColumns[0].setTasks([createdDefaultTask.id])
 
   // update first default column taskOrder
-  createdDefaultColumns[0].taskOrder = [createdDefaultTask.id]
+  createdDefaultColumns[0].taskOrder = [createdDefaultTask.draggableId]
   await createdDefaultColumns[0].save()
 
   // set project's columnOrder field and associate default columns, task
   const columnOrder = createdDefaultColumns.map(column => column.id)
   await project.setColumns(columnOrder)
   await project.setTasks([createdDefaultTask.id])
-  project.columnOrder = columnOrder
+  project.columnOrder = createdDefaultColumns.map(column => column.draggableId)
   await project.save()
 
   return project
@@ -88,7 +88,7 @@ Project.getSingleProjectAndAssociations = async function (projectId) {
         model: Column,
         include: {
           model: Task,
-          attributes: ['id', 'name', 'openedBy'],
+          attributes: ['id', 'draggableId', 'name', 'openedBy'],
           include: {model: User, attributes: ['id', 'imageUrl']}
         }
       }

@@ -9,7 +9,7 @@ const Column = db.define('column', {
   name: Sequelize.STRING,
   // taskOrder is an array of taskIds
   taskOrder: {
-    type: Sequelize.ARRAY(Sequelize.INTEGER),
+    type: Sequelize.ARRAY(Sequelize.UUID),
     defaultValue: []
   }
 })

@@ -33,13 +33,16 @@ const TaskList = styled.div`
   min-height: 100px;
 `
 
-const Column = ({columnId, index /* isDropDisabled */}) => {
-  const column = useSelector(state =>
-    state.project.columns.find(col => col.id === columnId)
-  )
+const Column = ({columnUUID, index /* isDropDisabled */}) => {
+  const column = useSelector(state => {
+    console.log(state.project)
+    return state.project.columns.find(col => col.draggableId === columnUUID)
+  })
 
-  return (
-    <Draggable draggableId={String(column.id)} index={index}>
+  console.log(column)
+
+  return column && column.draggableId ? (
+    <Draggable draggableId={column.draggableId} index={index}>
       {provided => (
         <Container {...provided.draggableProps} ref={provided.innerRef}>
           <Title {...provided.dragHandleProps}>{column.name}</Title>
@@ -61,8 +64,10 @@ const Column = ({columnId, index /* isDropDisabled */}) => {
                 {...provided.droppableProps}
                 isDraggingOver={snapshot.isDraggingOver}
               >
-                {column.taskOrder.map((taskId, index) => {
-                  return <Task key={taskId} taskId={taskId} index={index} />
+                {column.taskOrder.map((taskUUID, index) => {
+                  return (
+                    <Task key={taskUUID} taskUUID={taskUUID} index={index} />
+                  )
                 })}
                 {/* placeholder is a react element used to increase available
 								space of a droppable during drag as needed --
@@ -74,6 +79,8 @@ const Column = ({columnId, index /* isDropDisabled */}) => {
         </Container>
       )}
     </Draggable>
+  ) : (
+    <div>nothing here!</div>
   )
 }
 

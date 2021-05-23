@@ -155,7 +155,7 @@ const Main = () => {
         {provided => (
           <Container {...provided.droppableProps} ref={provided.innerRef}>
             {project.columnOrder &&
-              project.columnOrder.map((columnId, index) => {
+              project.columnOrder.map((columnUUID, index) => {
                 /*
                   // for example, this prevents moving tasks left
                   const isDropDisabled = index < state.homeIndex;
@@ -163,8 +163,8 @@ const Main = () => {
 
                 return (
                   <Column
-                    key={columnId}
-                    columnId={columnId}
+                    key={columnUUID}
+                    columnUUID={columnUUID}
                     // isDropDisabled={isDropDisabled}
                     index={index}
                   />
