@@ -4,6 +4,10 @@ const Column = require('./column')
 const User = require('./user')
 
 const Task = db.define('task', {
+  draggableId: {
+    type: Sequelize.UUID,
+    defaultValue: Sequelize.UUIDV4
+  },
   name: Sequelize.STRING,
   description: Sequelize.TEXT,
   assets: Sequelize.ARRAY(Sequelize.TEXT),

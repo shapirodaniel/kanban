@@ -61,8 +61,38 @@ const Main = () => {
 
 	*/
 
+  const handleColumnDrag = (
+    columnOrderArray,
+    source,
+    destination,
+    draggableId
+  ) => {
+    console.log('column drag detected!')
+    const newColumnOrder = [...columnOrderArray]
+    newColumnOrder.splice(source.index, 1)
+    // coerce draggableId back to num with unary operator
+    newColumnOrder.splice(destination.index, 0, +draggableId)
+    dispatch(
+      fetchUpdateCurrentProject(project.id, {
+        columnOrder: newColumnOrder
+      })
+    )
+    return console.log('new column order is: ', newColumnOrder)
+  }
+
+  const handleTaskDrag = (taskOrderArray, source, destination, draggableId) => {
+    const updatedTaskOrder = [...taskOrderArray]
+
+    updatedTaskOrder.splice(source.index, 1)
+    updatedTaskOrder.splice(destination.index, 0, +draggableId)
+
+    return console.log('updatedTaskOrder is: ', updatedTaskOrder)
+    // PUT Task.reorder
+    // send update info to db
+    // send socket updates to room
+  }
+
   const onDragEnd = result => {
-    // type will tell us if user dragged a column or a task
     const {destination, source, draggableId, type} = result
 
     // if dropped outside droppable target
@@ -77,65 +107,41 @@ const Main = () => {
 
     // for column reordering
     if (type === 'column') {
-      console.log('column drag detected!')
-
-      console.log(result)
-
-      const newColumnOrder = [...project.columnOrder]
-      newColumnOrder.splice(source.index, 1)
-      // coerce draggableId back to num with unary operator
-      newColumnOrder.splice(destination.index, 0, +draggableId)
-
-      dispatch(
-        fetchUpdateCurrentProject(project.id, {
-          columnOrder: newColumnOrder
-        })
+      handleColumnDrag(project.columnOrder, source, destination, draggableId)
+      console.log(
+        'droppable source/destination ids are: ',
+        source.droppableId,
+        destination.droppableId
       )
-
-      return console.log('new column order is: ', newColumnOrder)
+      return
     }
-
-    console.log(
-      'droppable source/destination ids are: ',
-      source.droppableId,
-      destination.droppableId
-    )
 
     // otherwise, define start and end cols for task reordering
     const startCol = project.columns[source.index]
     const finishCol = project.columns[destination.index]
 
-    console.log('start and finish cols are: ', startCol, finishCol)
-
     // if dropped in same column
-    if (startCol.taskOrder && startCol.id === finishCol.id) {
-      const updatedTaskOrder = [...startCol.taskOrder]
-
-      updatedTaskOrder.splice(source.index, 1)
-      updatedTaskOrder.splice(destination.index, 0, +draggableId)
-
-      return console.log('updatedTaskOrder is: ', updatedTaskOrder)
-      // PUT Task.reorder
-      // send update info to db
-      // send socket updates to room
+    if (startCol.id === finishCol.id) {
+      handleTaskDrag(startCol.taskOrder, source, destination, draggableId)
+      return
     }
 
-    // otherwise, dropped in a different column
-    if (startCol.taskOrder && finishCol.taskOrder) {
-      const updatedStartColTaskOrder = [...startCol.taskOrder]
-      updatedStartColTaskOrder.splice(source.index, 1)
+    // finally, if we end up here, a task was dragged between columns
+    const updatedStartColTaskOrder = [...startCol.taskOrder]
+    updatedStartColTaskOrder.splice(source.index, 1)
 
-      const updatedFinishColTaskOrder = [...finishCol.taskOrder]
-      updatedFinishColTaskOrder.splice(destination.index, 0, draggableId)
+    const updatedFinishColTaskOrder = [...finishCol.taskOrder]
+    // coerce draggableId to number here
+    updatedFinishColTaskOrder.splice(destination.index, 0, +draggableId)
 
-      return console.log(
-        'updated start col task order is: ',
-        updatedStartColTaskOrder,
-        '\n',
-        'updated finish col task order is: ',
-        updatedFinishColTaskOrder
-      )
-    }
+    return console.log(
+      'updated start col task order is: ',
+      updatedStartColTaskOrder,
+      '\n',
+      'updated finish col task order is: ',
+      updatedFinishColTaskOrder
+    )
+
     // PUT Task.reorder
     // send update info to db
     // send socket updates to room}
