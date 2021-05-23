@@ -7,7 +7,7 @@ import {DragDropContext, Droppable} from 'react-beautiful-dnd'
 
 import {useParams} from 'react-router-dom'
 import {useSelector, useDispatch} from 'react-redux'
-import {fetchCurrentProject} from '../store'
+import {fetchCurrentProject, updateCurrentProject} from '../store'
 
 const Container = styled.div`
   display: flex;
@@ -33,12 +33,10 @@ const Main = () => {
   // we can fetch the project :)
   console.log(project)
 
-  const [state, setState] = useState({...initialData, homeIndex: null})
-
+  // we'll use this function to send socket messages and prevent drag on the same card simultaneously
   const onDragStart = start => {
-    const homeIndex = state.columnOrder.indexOf(start.source.droppableId)
-
-    setState({...state, homeIndex})
+    const {draggableId} = start
+    console.log('draggableId is: ', draggableId)
   }
 
   /*
@@ -64,9 +62,6 @@ const Main = () => {
 	*/
 
   const onDragEnd = result => {
-    // clear homeIndex when drag finishes
-    setState({...state, homeIndex: null})
-
     // type will tell us if user dragged a column or a task
     const {destination, source, draggableId, type} = result
 
@@ -82,21 +77,21 @@ const Main = () => {
 
     // for column reordering
     if (type === 'column') {
-      const newColumnOrder = [...state.columnOrder]
+      const newColumnOrder = [...project.columnOrder]
       newColumnOrder.splice(source.index, 1)
       newColumnOrder.splice(destination.index, 0, draggableId)
 
       const newState = {
-        ...state,
+        ...project,
         columnOrder: newColumnOrder
       }
 
-      return setState(newState)
+      return updateCurrentProject(newState)
     }
 
     // otherwise, define start and end cols for task reordering
-    const startCol = state.columns[source.droppableId]
-    const finishCol = state.columns[destination.droppableId]
+    const startCol = project.columns[source.droppableId]
+    const finishCol = project.columns[destination.droppableId]
 
     // if dropped in same column
     if (startCol.id === finishCol.id) {
@@ -111,14 +106,14 @@ const Main = () => {
       }
 
       const newState = {
-        ...state,
+        ...project,
         columns: {
-          ...state.columns,
+          ...project.columns,
           [newColumn.id]: newColumn
         }
       }
 
-      return setState(newState)
+      return updateCurrentProject(newState)
       // send update info to db
       // send socket updates to room
     }
@@ -139,15 +134,15 @@ const Main = () => {
     }
 
     const newState = {
-      ...state,
+      ...project,
       columns: {
-        ...state.columns,
+        ...project.columns,
         [newStart.id]: newStart,
         [newFinish.id]: newFinish
       }
     }
 
-    setState(newState)
+    updateCurrentProject(newState)
     // send update info to db
     // send socket updates to room
   }
@@ -159,24 +154,43 @@ const Main = () => {
       <Droppable droppableId="all-columns" direction="horizontal" type="column">
         {provided => (
           <Container {...provided.droppableProps} ref={provided.innerRef}>
-            {state.columnOrder.map((columnId, index) => {
-              const column = state.columns[columnId]
-              const tasks = column.taskIds.map(taskId => state.tasks[taskId])
+            {project.columnOrder &&
+              project.columnOrder.map((columnId, index) => {
+                console.log(project.columnOrder)
 
-              // for example
-              // this prevents moving tasks left
-              // const isDropDisabled = index < state.homeIndex;
+                console.log(project.columns)
 
-              return (
-                <Column
-                  key={column.id}
-                  column={column}
-                  tasks={tasks}
-                  // isDropDisabled={isDropDisabled}
-                  index={index}
-                />
-              )
-            })}
+                // grab column by columnOrder id
+
+                const column = project.columns.find(col => col.id === columnId)
+
+                console.log(column)
+
+                // grab column tasks and order by taskIds on column
+                // important! ternary guarantees an array if taskOrder is NULL
+                const tasks = column.taskOrder
+                  ? column.taskOrder.map(taskId =>
+                      column.tasks.find(task => task.id === taskId)
+                    )
+                  : []
+
+                /*
+                  // for example, this prevents moving tasks left
+                  const isDropDisabled = index < state.homeIndex;
+                */
+
+                console.log(tasks)
+
+                return (
+                  <Column
+                    key={column.id}
+                    column={column}
+                    tasks={tasks}
+                    // isDropDisabled={isDropDisabled}
+                    index={index}
+                  />
+                )
+              })}
             {provided.placeholder}
           </Container>
         )}

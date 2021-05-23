@@ -51,11 +51,8 @@ const Task = ({task, index}) => {
           isDragDisabled={isDragDisabled}
         >
           {/* <Handle {...provided.dragHandleProps} /> */}
-          {typeof task.content === 'string' ? (
-            task.content
-          ) : (
-            <TaskContent content={task.content} />
-          )}
+
+          <TaskContent content={{...task}} />
         </Container>
       )}
     </Draggable>
