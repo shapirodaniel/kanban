@@ -34,7 +34,7 @@ const Task = ({task, index}) => {
 
   return (
     <Draggable
-      draggableId={task.id}
+      draggableId={String(task.id)}
       index={index}
       isDragDisabled={isDragDisabled}
     >

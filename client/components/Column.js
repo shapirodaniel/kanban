@@ -33,15 +33,15 @@ const TaskList = styled.div`
 
 const Column = ({column, index, tasks /* isDropDisabled */}) => {
   return (
-    <Draggable draggableId={column.id} index={index}>
+    <Draggable draggableId={String(column.id)} index={index}>
       {provided => (
         <Container {...provided.draggableProps} ref={provided.innerRef}>
-          <Title {...provided.dragHandleProps}>{column.title}</Title>
+          <Title {...provided.dragHandleProps}>{column.name}</Title>
           {/* react-beautiful-dnd uses the render props pattern,
 					so we have to invoke the child component wrapped by Droppable
 					with an anonymous function */}
           <Droppable
-            droppableId={column.id}
+            droppableId={String(column.id)}
             /* passed down from parent, where defined as any column left
 						of the current column to force ONLY right movement of tasks! */
             // isDropDisabled={isDropDisabled}
