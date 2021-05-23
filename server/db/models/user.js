@@ -65,6 +65,14 @@ User.beforeBulkCreate(users => {
   users.forEach(setSaltAndPassword)
 })
 
+//////////////////////
+/* INSTANCE METHODS */
+//////////////////////
+
+User.prototype.correctPassword = function (candidatePwd) {
+  return User.encryptPassword(candidatePwd, this.salt()) === this.password()
+}
+
 ///////////////////
 /* CLASS METHODS */
 ///////////////////
@@ -100,12 +108,4 @@ User.handleInvitation = async function (userId, organizationId, didAccept) {
   // otherwise, update the userOrg status from 'pending' to 'active'
   user_organization.status = 'active'
   await user_organization.save()
-}
-
-//////////////////////
-/* INSTANCE METHODS */
-//////////////////////
-
-User.prototype.correctPassword = function (candidatePwd) {
-  return User.encryptPassword(candidatePwd, this.salt()) === this.password()
 }

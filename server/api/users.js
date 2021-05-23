@@ -2,6 +2,7 @@ const router = require('express').Router()
 const {User} = require('../db/models')
 module.exports = router
 
+// GET all users
 router.get('/', async (req, res, next) => {
   try {
     const users = await User.findAll({
@@ -16,6 +17,7 @@ router.get('/', async (req, res, next) => {
   }
 })
 
+// CREATE a new user
 router.post('/', async (req, res, next) => {
   try {
     const [user, wasCreated] = await User.findOrCreate({
@@ -24,13 +26,14 @@ router.post('/', async (req, res, next) => {
       },
       defaults: {...req.body}
     })
-    res.status = wasCreated ? 204 : 200
-    res.send(user)
+    res.status(wasCreated ? 204 : 200).send(user)
   } catch (err) {
     next(err)
   }
 })
 
+// UPDATE handle user invitation acceptance / rejection
+// didAccept: Boolean
 router.put('/:id/invitations', async (req, res, next) => {
   try {
     const {organizationId, didAccept} = req.body
