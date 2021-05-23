@@ -89,7 +89,7 @@ Project.getSingleProjectAndAssociations = async function (projectId) {
         include: {
           model: Task,
           attributes: ['id', 'draggableId', 'name', 'openedBy'],
-          include: {model: User, attributes: ['id', 'imageUrl']}
+          include: {model: User, attributes: ['id', 'firstName', 'imageUrl']}
         }
       }
     ]

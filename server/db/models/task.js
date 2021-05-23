@@ -34,7 +34,7 @@ Task.createAndAssociate = async function (
 
   // fetch column and add task to taskOrder array
   const foundColumn = await Column.findByPk(+columnId)
-  foundColumn.taskOrder = [...foundColumn.taskOrder, task.id]
+  foundColumn.taskOrder = [...foundColumn.taskOrder, task.draggableId]
   await foundColumn.save()
 
   return task
