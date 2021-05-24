@@ -84,7 +84,7 @@ const Main = () => {
       newColumnOrder.splice(destination.index, 0, draggableId)
 
       // PUT single project columnOrder
-      dispatch(
+      return dispatch(
         fetchUpdateCurrentProject(project.id, {
           columnOrder: newColumnOrder
         })
@@ -95,7 +95,7 @@ const Main = () => {
     if (source.droppableId === destination.droppableId) {
       let newTaskOrder = [
         ...project.columns.find(
-          column => column.droppableId === destination.droppableId
+          column => column.droppableId === source.droppableId
         ).taskOrder
       ]
 
