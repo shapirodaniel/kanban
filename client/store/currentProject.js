@@ -40,10 +40,13 @@ export const fetchCurrentProject = projectId => async dispatch => {
 export const fetchUpdateCurrentProject =
   (projectId, updateInfo) => async dispatch => {
     try {
-      const {status} = await axios.put(`/api/projects/${projectId}`, updateInfo)
-
-      if (status === 200) {
-        dispatch(updateCurrentProject(updateInfo))
+      // to avoid render bug, dispatch local changes before PUT
+      // retry if status not 200
+      dispatch(updateCurrentProject(updateInfo))
+      let status
+      while (status !== 200) {
+        const res = await axios.put(`/api/projects/${projectId}`, updateInfo)
+        status = res.status
       }
     } catch (err) {
       console.error(err)
@@ -60,22 +63,26 @@ export const fetchReorderTask =
   ) =>
   async dispatch => {
     try {
-      const {status} = await axios.put(`/api/tasks/reorder`, {
-        draggableId,
-        sourceDroppableId,
-        sourceTaskOrder,
-        destDroppableId,
-        destTaskOrder
-      })
-      if (status === 200)
-        dispatch(
-          reorderTask(
-            sourceDroppableId,
-            sourceTaskOrder,
-            destDroppableId,
-            destTaskOrder
-          )
+      // same dispatch then PUT logic here
+      dispatch(
+        reorderTask(
+          sourceDroppableId,
+          sourceTaskOrder,
+          destDroppableId,
+          destTaskOrder
         )
+      )
+      let status
+      while (status !== 200) {
+        const res = await axios.put(`/api/tasks/reorder`, {
+          draggableId,
+          sourceDroppableId,
+          sourceTaskOrder,
+          destDroppableId,
+          destTaskOrder
+        })
+        status = res.status
+      }
     } catch (err) {
       console.error(err)
     }
