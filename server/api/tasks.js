@@ -58,7 +58,7 @@ router.post('/', async (req, res, next) => {
   }
 })
 
-// UPDATE assign task to column, move task within column, or move task from column to another column
+// UPDATE move task within column or move task between columns
 // (in board view only)
 router.put('/reorder', async (req, res, next) => {
   try {
