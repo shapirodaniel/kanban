@@ -119,8 +119,6 @@ const Main = () => {
       ).taskOrder
     ].filter(taskDraggableId => taskDraggableId !== draggableId)
 
-    console.log('sourceTaskOrder is: ', sourceTaskOrder)
-
     // then, update the destination column and splice in the new task's draggableId
     let destTaskOrder = [
       ...project.columns.find(
@@ -128,8 +126,6 @@ const Main = () => {
       ).taskOrder
     ]
     destTaskOrder.splice(destination.index, 0, draggableId)
-
-    console.log('destTaskOrder is: ', destTaskOrder)
 
     return dispatch(
       fetchReorderTask(

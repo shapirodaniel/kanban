@@ -60,7 +60,6 @@ export const fetchReorderTask =
   ) =>
   async dispatch => {
     try {
-      console.log('sourceDroppableId, ', sourceDroppableId)
       const {status} = await axios.put(`/api/tasks/reorder`, {
         draggableId,
         sourceDroppableId,
