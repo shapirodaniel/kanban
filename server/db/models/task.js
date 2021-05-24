@@ -58,50 +58,69 @@ Task.updateAndAssociate = async function (taskId, updateInfo, assignees) {
   return task
 }
 
-// helper for reorder method below
-// we could put this method on the Column prototype, but it's clearer to state the method standalone here, rather than hide this logic in the Column model
-const handleReorder = async (taskOrderArray, columnInstance) => {
-  if (!taskOrderArray.length) {
-    await columnInstance.removeTasks()
-  } else {
-    columnInstance.taskOrder = taskOrderArray
-    await columnInstance.save()
-  }
-}
-
 // board view only
 Task.reorder = async function (
-  taskId,
-  sourceColId,
+  draggableId,
+  sourceDroppableId,
   sourceTaskOrder,
-  destColId,
+  destDroppableId,
   destTaskOrder
 ) {
-  // grab task and columns
-  const task = await Task.findByPk(taskId)
-  const sourceCol = await Column.findByPk(sourceColId)
+  console.log(
+    draggableId,
+    sourceDroppableId,
+    sourceTaskOrder,
+    destDroppableId,
+    destTaskOrder
+  )
 
-  if (!(task || sourceCol)) {
+  // grab task and columns
+  const task = await Task.findOne({
+    where: {
+      draggableId
+    }
+  })
+  const sourceCol = await Column.findOne({
+    where: {
+      droppableId: sourceDroppableId
+    }
+  })
+  if (!task || !sourceCol) {
     throw new Error('Task or source column instance not found!')
   }
 
   // if no destination column id provided, task has been moved within a single column and we'll only need to persist the new taskOrder of the source column
-  if (!destColId) {
+  if (!destDroppableId) {
     // we still need to set the column for the task, since it's possible that the task's columnId was NULL!
     task.setColumn(sourceCol.id)
-    return handleReorder(sourceTaskOrder, sourceCol)
+    sourceCol.taskOrder = sourceTaskOrder
+    await sourceCol.save()
+    return
   }
 
   // else, task has been moved between columns and we'll need to reassign source and destination column tasks and taskOrders
-  const destCol = await Column.findByPk(destColId)
-
+  const destCol = await Column.findOne({
+    where: {
+      droppableId: destDroppableId
+    }
+  })
   if (!destCol) {
     throw new Error('Destination column instance not found!')
   }
 
   task.setColumn(destCol.id)
-  handleReorder(sourceTaskOrder, sourceCol)
-  handleReorder(destTaskOrder, destCol)
+
+  if (sourceTaskOrder.length === 0) {
+    await sourceCol.removeTask(task.id)
+    sourceCol.taskOrder = []
+    await sourceCol.save()
+  } else {
+    sourceCol.taskOrder = sourceTaskOrder
+    await sourceCol.save()
+  }
+
+  destCol.taskOrder = destTaskOrder
+  await destCol.save()
 }
 
 // this method can be used in either the board view or the single task view

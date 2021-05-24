@@ -47,7 +47,7 @@ const Column = ({columnUUID, index /* isDropDisabled */}) => {
 					so we have to invoke the child component wrapped by Droppable
 					with an anonymous function */}
           <Droppable
-            droppableId={String(column.id)}
+            droppableId={String(column.droppableId)}
             /* passed down from parent, where defined as any column left
 						of the current column to force ONLY right movement of tasks! */
             // isDropDisabled={isDropDisabled}

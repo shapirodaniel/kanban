@@ -3,6 +3,8 @@ import axios from 'axios'
 const GET_CURRENT_PROJECT = 'GET_CURRENT_PROJECT'
 const UPDATE_CURRENT_PROJECT = 'UPDATE_CURRENT_PROJECT'
 
+const REORDER_TASK = 'REORDER_TASK'
+
 const getCurrentProject = project => ({
   type: GET_CURRENT_PROJECT,
   payload: project
@@ -10,6 +12,21 @@ const getCurrentProject = project => ({
 export const updateCurrentProject = updateInfo => ({
   type: UPDATE_CURRENT_PROJECT,
   payload: updateInfo
+})
+
+const reorderTask = (
+  sourceDroppableId,
+  sourceTaskOrder,
+  destDroppableId,
+  destTaskOrder
+) => ({
+  type: REORDER_TASK,
+  payload: {
+    sourceDroppableId,
+    sourceTaskOrder,
+    destDroppableId,
+    destTaskOrder
+  }
 })
 
 export const fetchCurrentProject = projectId => async dispatch => {
@@ -33,6 +50,38 @@ export const fetchUpdateCurrentProject =
     }
   }
 
+export const fetchReorderTask =
+  (
+    draggableId,
+    sourceDroppableId,
+    sourceTaskOrder,
+    destDroppableId,
+    destTaskOrder
+  ) =>
+  async dispatch => {
+    try {
+      console.log('sourceDroppableId, ', sourceDroppableId)
+      const {status} = await axios.put(`/api/tasks/reorder`, {
+        draggableId,
+        sourceDroppableId,
+        sourceTaskOrder,
+        destDroppableId,
+        destTaskOrder
+      })
+      if (status === 200)
+        dispatch(
+          reorderTask(
+            sourceDroppableId,
+            sourceTaskOrder,
+            destDroppableId,
+            destTaskOrder
+          )
+        )
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
 const initState = {}
 
 export default (state = initState, {type, payload}) => {
@@ -41,6 +90,21 @@ export default (state = initState, {type, payload}) => {
       return {...state, ...payload}
     case UPDATE_CURRENT_PROJECT:
       return {...state, ...payload}
+    case REORDER_TASK: {
+      const updatedColumns = state.columns.map(col => {
+        if (col.droppableId === payload.sourceDroppableId) {
+          col.taskOrder = payload.sourceTaskOrder
+        }
+
+        if (col.droppableId === payload.destDroppableId) {
+          col.taskOrder = payload.destTaskOrder
+        }
+
+        return col
+      })
+
+      return {...state, columns: updatedColumns}
+    }
     default:
       return state
   }

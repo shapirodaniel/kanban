@@ -7,7 +7,11 @@ import {DragDropContext, Droppable} from 'react-beautiful-dnd'
 
 import {useParams} from 'react-router-dom'
 import {useSelector, useDispatch} from 'react-redux'
-import {fetchCurrentProject, fetchUpdateCurrentProject} from '../store'
+import {
+  fetchCurrentProject,
+  fetchUpdateCurrentProject,
+  fetchReorderTask
+} from '../store'
 
 const Container = styled.div`
   display: flex;
@@ -57,36 +61,8 @@ const Main = () => {
 
 	*/
 
-  const handleColumnDrag = (
-    columnOrderArray,
-    source,
-    destination,
-    draggableId
-  ) => {
-    const newColumnOrder = [...columnOrderArray]
-    newColumnOrder.splice(source.index, 1)
-    // coerce draggableId back to num with unary operator
-    newColumnOrder.splice(destination.index, 0, draggableId)
-    dispatch(
-      fetchUpdateCurrentProject(project.id, {
-        columnOrder: newColumnOrder
-      })
-    )
-  }
-
-  const handleTaskDrag = (taskOrderArray, source, destination, draggableId) => {
-    const updatedTaskOrder = [...taskOrderArray]
-
-    updatedTaskOrder.splice(source.index, 1)
-    updatedTaskOrder.splice(destination.index, 0, draggableId)
-
-    return console.log('updatedTaskOrder is: ', updatedTaskOrder)
-    // PUT Task.reorder
-    // send update info to db
-    // send socket updates to room
-  }
-
   const onDragEnd = result => {
+    // unpack result (see above)
     const {destination, source, draggableId, type} = result
 
     // if dropped outside droppable target
@@ -101,42 +77,68 @@ const Main = () => {
 
     // for column reordering
     if (type === 'column') {
-      return handleColumnDrag(
-        project.columnOrder,
-        source,
-        destination,
-        draggableId
+      const newColumnOrder = [...project.columnOrder]
+
+      // move uuid to new spot in orderArray
+      newColumnOrder.splice(source.index, 1)
+      newColumnOrder.splice(destination.index, 0, draggableId)
+
+      // PUT single project columnOrder
+      dispatch(
+        fetchUpdateCurrentProject(project.id, {
+          columnOrder: newColumnOrder
+        })
       )
     }
 
-    // otherwise, define start and end cols for task reordering
-    const startCol = project.columns[source.index]
-    const finishCol = project.columns[destination.index]
-
     // if dropped in same column
-    if (startCol.id === finishCol.id) {
-      return handleTaskDrag(
-        startCol.taskOrder,
-        source,
-        destination,
-        draggableId
+    if (source.droppableId === destination.droppableId) {
+      let newTaskOrder = [
+        ...project.columns.find(
+          column => column.droppableId === destination.droppableId
+        ).taskOrder
+      ]
+
+      newTaskOrder.splice(source.index, 1)
+      newTaskOrder.splice(destination.index, 0, draggableId)
+
+      return dispatch(
+        fetchReorderTask(draggableId, source.droppableId, newTaskOrder)
       )
     }
 
     // finally, if we end up here, a task was dragged between columns
-    const updatedStartColTaskOrder = [...startCol.taskOrder]
-    updatedStartColTaskOrder.splice(source.index, 1)
+    // first, update the startCol taskOrderArray by filtering out the relocated task by its draggableId
 
-    const updatedFinishColTaskOrder = [...finishCol.taskOrder]
-    // coerce draggableId to number here
-    updatedFinishColTaskOrder.splice(destination.index, 0, draggableId)
+    // first we'll say hi
+    console.log('task moved between columns!')
 
-    return console.log(
-      'updated start col task order is: ',
-      updatedStartColTaskOrder,
-      '\n',
-      'updated finish col task order is: ',
-      updatedFinishColTaskOrder
+    let sourceTaskOrder = [
+      ...project.columns.find(
+        column => column.droppableId === source.droppableId
+      ).taskOrder
+    ].filter(taskDraggableId => taskDraggableId !== draggableId)
+
+    console.log('sourceTaskOrder is: ', sourceTaskOrder)
+
+    // then, update the destination column and splice in the new task's draggableId
+    let destTaskOrder = [
+      ...project.columns.find(
+        column => column.droppableId === destination.droppableId
+      ).taskOrder
+    ]
+    destTaskOrder.splice(destination.index, 0, draggableId)
+
+    console.log('destTaskOrder is: ', destTaskOrder)
+
+    return dispatch(
+      fetchReorderTask(
+        draggableId,
+        source.droppableId,
+        sourceTaskOrder,
+        destination.droppableId,
+        destTaskOrder
+      )
     )
 
     // PUT Task.reorder

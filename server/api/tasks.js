@@ -58,6 +58,30 @@ router.post('/', async (req, res, next) => {
   }
 })
 
+// UPDATE assign task to column, move task within column, or move task from column to another column
+// (in board view only)
+router.put('/reorder', async (req, res, next) => {
+  try {
+    const {
+      draggableId,
+      sourceDroppableId,
+      sourceTaskOrder,
+      destDroppableId,
+      destTaskOrder
+    } = req.body
+    await Task.reorder(
+      draggableId,
+      sourceDroppableId,
+      sourceTaskOrder,
+      destDroppableId,
+      destTaskOrder
+    )
+    res.sendStatus(200)
+  } catch (err) {
+    next(err)
+  }
+})
+
 // UPDATE a single task in single task view
 /*
   req.body = {
@@ -71,24 +95,6 @@ router.put('/:id', async (req, res, next) => {
   try {
     const {updateInfo, assignees} = req.body
     await Task.updateAndAssociate(+req.params.id, updateInfo, assignees)
-    res.sendStatus(200)
-  } catch (err) {
-    next(err)
-  }
-})
-
-// UPDATE assign task to column, move task within column, or move task from column to another column
-// (in board view only)
-router.put('/:id/reorder', async (req, res, next) => {
-  try {
-    const {sourceColId, destColId, sourceTaskOrder, destTaskOrder} = req.body
-    await Task.reorder(
-      +req.params.id,
-      sourceColId,
-      sourceTaskOrder,
-      destColId,
-      destTaskOrder
-    )
     res.sendStatus(200)
   } catch (err) {
     next(err)

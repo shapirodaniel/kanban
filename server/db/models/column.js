@@ -6,6 +6,10 @@ const Column = db.define('column', {
     type: Sequelize.UUID,
     defaultValue: Sequelize.UUIDV4
   },
+  droppableId: {
+    type: Sequelize.UUID,
+    defaultValue: Sequelize.UUIDV4
+  },
   name: Sequelize.STRING,
   // taskOrder is an array of taskIds
   taskOrder: {
