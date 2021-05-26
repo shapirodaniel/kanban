@@ -1,11 +1,24 @@
+/* eslint-disable react/display-name */
 import React from 'react'
 import {useParams, Switch, Route, NavLink} from 'react-router-dom'
 import styled from 'styled-components'
+import {MyOrgs, MyInvites, MyProfile} from './'
 
 const tabs = [
-  {id: 1, name: 'Organizations', link: '/organizations'},
-  {id: 2, name: 'Invitations', link: '/invitations'},
-  {id: 3, name: 'Profile', link: '/profile'}
+  {
+    id: 1,
+    name: 'Organizations',
+    link: '/organizations',
+    // render function supplies render prop on Route
+    render: () => <MyOrgs />
+  },
+  {
+    id: 2,
+    name: 'Invitations',
+    link: '/invitations',
+    render: () => <MyInvites />
+  },
+  {id: 3, name: 'Profile', link: '/profile', render: () => <MyProfile />}
 ]
 
 const Container = styled.div``
@@ -28,7 +41,6 @@ const StyledNavLink = styled(NavLink).attrs({activeClassName})`
     border-bottom: 1px solid black;
     color: inherit;
   }
-
   &.${activeClassName} {
     color: blue;
     border: 1px solid black;
@@ -55,7 +67,7 @@ const MyInfo = () => {
           <Route
             key={tab.id}
             path={`/users/${userId + tab.link}`}
-            render={() => <div>component: {tab.name}</div>}
+            render={tab.render}
           />
         ))}
       </Switch>
