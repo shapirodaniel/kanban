@@ -1,5 +1,5 @@
 import React from 'react'
-import {useLocation, useParams, Switch, Route, Link} from 'react-router-dom'
+import {useParams, Switch, Route, NavLink} from 'react-router-dom'
 import styled from 'styled-components'
 
 const tabs = [
@@ -14,21 +14,27 @@ const NavTabs = styled.nav`
   display: flex;
 `
 
-const Tab = ({tab}) => <div style={{margin: '0 1em'}}>hi im {tab.name}</div>
+// active class styling for NavLink applied by styled-components
+const activeClassName = 'selected'
+const StyledNavLink = styled(NavLink).attrs({activeClassName})`
+  &.${activeClassName} {
+    text-decoration: underline;
+    color: red;
+  }
+`
+
+const Tab = ({tab}) => <div style={{margin: '0 1em'}}>{tab.name}</div>
 
 const MyInfo = () => {
-  const {pathname} = useLocation()
   const {userId} = useParams()
-
-  console.log(location, userId)
 
   return (
     <Container>
       <NavTabs>
         {tabs.map(tab => (
-          <Link key={tab.id} to={`/users/${userId + tab.link}`}>
+          <StyledNavLink key={tab.id} to={`/users/${userId + tab.link}`}>
             <Tab tab={tab} />
-          </Link>
+          </StyledNavLink>
         ))}
       </NavTabs>
       <Switch>
