@@ -48,8 +48,6 @@ const StyledNavLink = styled(NavLink).attrs({activeClassName})`
   }
 `
 
-const Tab = ({tab}) => <div>{tab.name}</div>
-
 const MyInfo = () => {
   const {userId} = useParams()
 
@@ -58,7 +56,7 @@ const MyInfo = () => {
       <NavTabs>
         {tabs.map(tab => (
           <StyledNavLink key={tab.id} to={`/users/${userId + tab.link}`}>
-            <Tab tab={tab} />
+            {tab.name}
           </StyledNavLink>
         ))}
       </NavTabs>
