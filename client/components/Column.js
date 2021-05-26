@@ -61,9 +61,9 @@ const Column = ({columnUUID, index /* isDropDisabled */}) => {
                 {...provided.droppableProps}
                 isDraggingOver={snapshot.isDraggingOver}
               >
-                {column.taskOrder.map((taskUUID, index) => {
+                {column.taskOrder.map((taskUUID, taskIdx) => {
                   return (
-                    <Task key={taskUUID} taskUUID={taskUUID} index={index} />
+                    <Task key={taskUUID} taskUUID={taskUUID} index={taskIdx} />
                   )
                 })}
                 {/* placeholder is a react element used to increase available

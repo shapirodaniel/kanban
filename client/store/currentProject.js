@@ -2,13 +2,13 @@ import axios from 'axios'
 
 const GET_CURRENT_PROJECT = 'GET_CURRENT_PROJECT'
 const UPDATE_CURRENT_PROJECT = 'UPDATE_CURRENT_PROJECT'
-
 const REORDER_TASK = 'REORDER_TASK'
 
 const getCurrentProject = project => ({
   type: GET_CURRENT_PROJECT,
   payload: project
 })
+
 export const updateCurrentProject = updateInfo => ({
   type: UPDATE_CURRENT_PROJECT,
   payload: updateInfo
@@ -37,6 +37,7 @@ export const fetchCurrentProject = projectId => async dispatch => {
     console.error(err)
   }
 }
+
 export const fetchUpdateCurrentProject =
   (projectId, updateInfo) => async dispatch => {
     try {
