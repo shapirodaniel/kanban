@@ -26,10 +26,11 @@ const StyledNavLink = styled(NavLink).attrs({activeClassName})`
     min-width: 120px;
     margin: 0;
     border-bottom: 1px solid black;
+    color: inherit;
   }
 
   &.${activeClassName} {
-    color: red;
+    color: blue;
     border: 1px solid black;
     border-bottom: none;
   }
