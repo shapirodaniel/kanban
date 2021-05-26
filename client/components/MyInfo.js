@@ -17,13 +17,25 @@ const NavTabs = styled.nav`
 // active class styling for NavLink applied by styled-components
 const activeClassName = 'selected'
 const StyledNavLink = styled(NavLink).attrs({activeClassName})`
+  & {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    width: 100%;
+    min-width: 120px;
+    margin: 0;
+    border-bottom: 1px solid black;
+  }
+
   &.${activeClassName} {
-    text-decoration: underline;
     color: red;
+    border: 1px solid black;
+    border-bottom: none;
   }
 `
 
-const Tab = ({tab}) => <div style={{margin: '0 1em'}}>{tab.name}</div>
+const Tab = ({tab}) => <div>{tab.name}</div>
 
 const MyInfo = () => {
   const {userId} = useParams()
