@@ -37,17 +37,17 @@ const TabbedNavigation = ({tabs}) => {
   return (
     <Container>
       <NavTabs>
-        {tabs.map(tab => (
-          <StyledNavLink key={tab.id} to={`${url + tab.link}`}>
-            {tab.name}
+        {tabs.map(({id, link, name}) => (
+          <StyledNavLink key={id} to={url + link}>
+            {name}
           </StyledNavLink>
         ))}
       </NavTabs>
       <Switch>
-        {tabs.map(tab => (
+        {tabs.map(({id, link, render}) => (
           // tab instances are { id, name, link, render }
           // tab render prop is a function that should be passed to the Route's render prop
-          <Route key={tab.id} path={`${url + tab.link}`} render={tab.render} />
+          <Route key={id} path={url + link} render={render} />
         ))}
       </Switch>
     </Container>
