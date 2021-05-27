@@ -45,6 +45,8 @@ const TabbedNavigation = ({tabs}) => {
       </NavTabs>
       <Switch>
         {tabs.map(tab => (
+          // tab instances are { id, name, link, render }
+          // tab render prop is a function that should be passed to the Route's render prop
           <Route key={tab.id} path={`${url + tab.link}`} render={tab.render} />
         ))}
       </Switch>
