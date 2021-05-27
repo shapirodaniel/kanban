@@ -2,7 +2,7 @@
 import React from 'react'
 import {MyOrgs, MyInvites, MyProfile} from '../'
 
-export const myInfoTabs = [
+export default [
   {
     id: 1,
     name: 'Organizations',

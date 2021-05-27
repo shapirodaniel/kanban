@@ -1,6 +1,6 @@
 import React from 'react'
 import {TabbedNavigation} from './'
-import {myInfoTabs} from './tabbed-navigation/myInfoTabs'
+import {myInfoTabs} from './tabbed-navigation'
 
 // HOC pattern
 // to use TabbedNavigation, pass a tabs prop
