@@ -31,11 +31,13 @@ const Main = () => {
   let shouldUpdate = useSocketUpdates(socket)
 
   useEffect(() => {
-    // first, mount component
-    let isMounted = true
-
     // then emit enter-room message with payload {type, id}
     socket.emit('enter-room', {type: 'project', id: projectId})
+  }, [])
+
+  useEffect(() => {
+    // first, mount component
+    let isMounted = true
 
     // if we're mounted, fetch the data
     if (isMounted) {
@@ -45,7 +47,6 @@ const Main = () => {
     // cleanup func unmounts component and leaves socket room
     return () => {
       isMounted = false
-      socket.emit('leave-room', {type: 'project', id: projectId})
     }
   }, [shouldUpdate])
 

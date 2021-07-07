@@ -17,21 +17,23 @@ module.exports = io => {
     */
 
     socket.on('enter-room', ({type, id}) => {
+      console.log(`${socket.id} has entered the room!`)
       socket.join(`${type}-${id}`)
     })
 
     socket.on('leave-room', ({type, id}) => {
+      console.log(`${socket.id} has left the room!`)
       socket.leave(`${type}-${id}`)
     })
 
     socket.on('UPDATE_CURRENT_PROJECT', ({type, id}) => {
       console.log('serverside update current project msg received!')
-      io.in(`${type}-${id}`).emit('should-update')
+      io.to(`${type}-${id}`).emit('should-update')
     })
 
     socket.on('REORDER_TASK', ({type, id}) => {
       console.log('serverside update current project msg received!')
-      io.in(`${type}-${id}`).emit('should-update')
+      io.to(`${type}-${id}`).emit('should-update')
     })
   })
 }

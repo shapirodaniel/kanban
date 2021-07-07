@@ -9,7 +9,7 @@ export const useSocketUpdates = socket => {
       console.log('update msg received in useSocketUpdates!')
       setFlag(!flag)
     })
-  }, [flag])
+  })
 
   return flag
 }

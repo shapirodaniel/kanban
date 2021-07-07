@@ -50,7 +50,6 @@ export const fetchUpdateCurrentProject =
         const res = await axios.put(`/api/projects/${projectId}`, updateInfo)
         status = res.status
       }
-      console.log('stuff happened')
       socket.emit(UPDATE_CURRENT_PROJECT, {type: 'project', id: projectId})
     } catch (err) {
       console.error(err)
