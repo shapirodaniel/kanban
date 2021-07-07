@@ -27,27 +27,19 @@ const Main = () => {
   const dispatch = useDispatch()
   const project = useSelector(state => state.project)
 
-  // this hook takes a socket instance and returns a shouldUpdate boolean that can be used to trigger data refreshes when socket updates are received
-  let shouldUpdate = useSocketUpdates(socket)
-
   useEffect(() => {
+    dispatch(fetchCurrentProject(projectId))
     // then emit enter-room message with payload {type, id}
     socket.emit('enter-room', {type: 'project', id: projectId})
   }, [])
 
+  // this hook takes a socket instance and returns a shouldUpdate boolean that can be used to trigger data refreshes when socket updates are received
+  let shouldUpdate = useSocketUpdates(socket)
+
+  // we'll use a separate useEffect call and trigger it on changes to the shouldUpdate bool
+  // our shouldUpdate is "protected" by an isMounted check inside useSocketUpdates, so we don't have to check if we should dispatch here
   useEffect(() => {
-    // first, mount component
-    let isMounted = true
-
-    // if we're mounted, fetch the data
-    if (isMounted) {
-      dispatch(fetchCurrentProject(projectId))
-    }
-
-    // cleanup func unmounts component and leaves socket room
-    return () => {
-      isMounted = false
-    }
+    dispatch(fetchCurrentProject(projectId))
   }, [shouldUpdate])
 
   // we'll use this function to send socket messages and prevent drag on the same card simultaneously

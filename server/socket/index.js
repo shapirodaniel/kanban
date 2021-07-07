@@ -23,12 +23,12 @@ module.exports = io => {
 
     socket.on('UPDATE_CURRENT_PROJECT', ({type, id}) => {
       console.log('serverside update current project msg received!')
-      io.in(`${type}-${id}`).emit('should-update')
+      io.to(`${type}-${id}`).emit('should-update')
     })
 
     socket.on('REORDER_TASK', ({type, id}) => {
       console.log('serverside update current project msg received!')
-      io.in(`${type}-${id}`).emit('should-update')
+      io.to(`${type}-${id}`).emit('should-update')
     })
   })
 }
