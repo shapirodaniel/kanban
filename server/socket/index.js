@@ -21,11 +21,6 @@ module.exports = io => {
       socket.join(`${type}-${id}`)
     })
 
-    socket.on('leave-room', ({type, id}) => {
-      console.log(`${socket.id} has left the room!`)
-      socket.leave(`${type}-${id}`)
-    })
-
     socket.on('UPDATE_CURRENT_PROJECT', ({type, id}) => {
       console.log('serverside update current project msg received!')
       io.to(`${type}-${id}`).emit('should-update')
