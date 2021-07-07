@@ -14,7 +14,6 @@ import {
 } from '../store'
 
 import socket from '../socket'
-import {useSocketUpdates} from '../custom-hooks/useSocketUpdates'
 
 const Container = styled.div`
   display: flex;
@@ -27,20 +26,19 @@ const Main = () => {
   const dispatch = useDispatch()
   const project = useSelector(state => state.project)
 
+  // initialize data and emit enter-room event to join room serverside
   useEffect(() => {
     dispatch(fetchCurrentProject(projectId))
     // then emit enter-room message with payload {type, id}
     socket.emit('enter-room', {type: 'project', id: projectId})
   }, [])
 
-  // this hook takes a socket instance and returns a shouldUpdate boolean that can be used to trigger data refreshes when socket updates are received
-  let shouldUpdate = useSocketUpdates(socket)
-
-  // we'll use a separate useEffect call and trigger it on changes to the shouldUpdate bool
-  // our shouldUpdate is "protected" by an isMounted check inside useSocketUpdates, so we don't have to check if we should dispatch here
+  // continually listen for should-update events to trigger clientside updates
   useEffect(() => {
-    dispatch(fetchCurrentProject(projectId))
-  }, [shouldUpdate])
+    socket.on('should-update', () => {
+      dispatch(fetchCurrentProject(projectId))
+    })
+  }, [])
 
   // we'll use this function to send socket messages and prevent drag on the same card simultaneously
   const onDragStart = start => {
