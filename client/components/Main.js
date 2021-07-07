@@ -13,6 +13,9 @@ import {
   fetchReorderTask
 } from '../store'
 
+import socket from '../socket'
+import {useSocketUpdates} from '../custom-hooks/useSocketUpdates'
+
 const Container = styled.div`
   display: flex;
   overflow-x: scroll;
@@ -24,15 +27,27 @@ const Main = () => {
   const dispatch = useDispatch()
   const project = useSelector(state => state.project)
 
+  // this hook takes a socket instance and returns a shouldUpdate boolean that can be used to trigger data refreshes when socket updates are received
+  let shouldUpdate = useSocketUpdates(socket)
+
   useEffect(() => {
+    // first, mount component
     let isMounted = true
+
+    // then emit enter-room message with payload {type, id}
+    socket.emit('enter-room', {type: 'project', id: projectId})
+
+    // if we're mounted, fetch the data
     if (isMounted) {
       dispatch(fetchCurrentProject(projectId))
     }
+
+    // cleanup func unmounts component and leaves socket room
     return () => {
       isMounted = false
+      socket.emit('leave-room', {type: 'project', id: projectId})
     }
-  }, [])
+  }, [shouldUpdate])
 
   // we'll use this function to send socket messages and prevent drag on the same card simultaneously
   const onDragStart = start => {
@@ -103,7 +118,14 @@ const Main = () => {
       newTaskOrder.splice(destination.index, 0, draggableId)
 
       return dispatch(
-        fetchReorderTask(draggableId, source.droppableId, newTaskOrder)
+        fetchReorderTask(
+          draggableId,
+          source.droppableId,
+          newTaskOrder,
+          null,
+          null,
+          projectId
+        )
       )
     }
 
@@ -133,13 +155,10 @@ const Main = () => {
         source.droppableId,
         sourceTaskOrder,
         destination.droppableId,
-        destTaskOrder
+        destTaskOrder,
+        projectId
       )
     )
-
-    // PUT Task.reorder
-    // send update info to db
-    // send socket updates to room}
   }
 
   return (

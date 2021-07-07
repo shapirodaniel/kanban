@@ -1,4 +1,5 @@
 import axios from 'axios'
+import socket from '../socket'
 
 const GET_CURRENT_PROJECT = 'GET_CURRENT_PROJECT'
 const UPDATE_CURRENT_PROJECT = 'UPDATE_CURRENT_PROJECT'
@@ -49,6 +50,8 @@ export const fetchUpdateCurrentProject =
         const res = await axios.put(`/api/projects/${projectId}`, updateInfo)
         status = res.status
       }
+      console.log('stuff happened')
+      socket.emit(UPDATE_CURRENT_PROJECT, {type: 'project', id: projectId})
     } catch (err) {
       console.error(err)
     }
@@ -60,7 +63,8 @@ export const fetchReorderTask =
     sourceDroppableId,
     sourceTaskOrder,
     destDroppableId,
-    destTaskOrder
+    destTaskOrder,
+    projectId
   ) =>
   async dispatch => {
     try {
@@ -84,6 +88,7 @@ export const fetchReorderTask =
         })
         status = res.status
       }
+      socket.emit(REORDER_TASK, {type: 'project', id: projectId})
     } catch (err) {
       console.error(err)
     }
